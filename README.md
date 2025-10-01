@@ -21,7 +21,7 @@ This project uses **invokable component classes** and **output buffering** to pr
 ## Usage
 
 ```bash
-git clone https://github.com/Taujor/php-static-site-generator/
+php scripts/build.php
 ```
 
 ## Thinking Behind the Structure
