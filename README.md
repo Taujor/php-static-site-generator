@@ -1,7 +1,7 @@
 # PHPSSG (Personal Home Page Static Site Generator)
 
 A lightweight static site generator, and easy way to build **composable templates** in pure PHP.  
-This project uses **invokable component classes** and **output buffering** to provide a clean, React-like developer experience — without a third-party templating engine.
+This project uses **invokable component classes** and **output buffering** to provide a clean, composable developer experience — without a third-party templating engine.
 
 ## Features
 
