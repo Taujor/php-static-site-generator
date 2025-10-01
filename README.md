@@ -20,8 +20,14 @@ This project uses **invokable component classes** and **output buffering** to pr
 
 ## Usage
 
+How to generate a static site
 ```bash
-php scripts/build.php
+php scripts/build.php // generates a minified html "index.html" file in "/public"
+```
+
+Running a development server
+```bash
+php -S localhost:8080 public/index.html 
 ```
 
 ## Thinking Behind the Structure
