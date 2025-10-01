@@ -1,7 +1,7 @@
 # PHPSSG (Personal Home Page Static Site Generator)
 
 A lightweight static site generator, and easy way to build **composable templates** in pure PHP.  
-This project uses **invokable component classes** and **output buffering** to provide a clean, composable developer experience — without a third-party templating engine.
+This project uses **invokable component classes** and **output buffering** to provide a clean, composable developer experience without a third-party templating engine.
 
 ## Features
 
@@ -32,7 +32,7 @@ git clone https://github.com/Taujor/php-static-site-generator/
 
 - **`views/`**: Contains the **raw PHP templates** (markup only).  
   - Example: `header.php` defines the actual HTML structure for the header.  
-  - Views don’t contain business logic — they just display what presenters feed them.  
+  - Views don’t contain business logic they just display what presenters feed them.  
 
 - **`utilities/`**: Small helpers like `Html` that handle repetitive tasks (e.g. output buffering and rendering).  
 
@@ -40,9 +40,9 @@ git clone https://github.com/Taujor/php-static-site-generator/
 
 - **`pages/`**: Page-level presenters that compose components and layouts together to form a complete page.  
 
-- **`public/`**: Web-facing assets and build directory — HTML entry points, CSS, JS. Keeps PHP source code out of the document root.  
+- **`public/`**: Web-facing assets and build directory. HTML entry points, CSS, JS. Keeps PHP source code out of the document root.  
 
-- **`config/`**: Bootstrap and setup code (autoloaders, environment, etc.).  
+- **`config/`**: Bootstrap and setup code (autoloaders, environment, etc).  
 
 - **`scripts/`**: Development/build or other server-side tooling.  
 
