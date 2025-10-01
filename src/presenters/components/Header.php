@@ -1,9 +1,9 @@
 <?php namespace Components;
 
-use Utilities\Html;
+use Utilities\Renderer;
 
 class Header {
-    use Html;   
+    use Renderer;   
     function __construct(private Button $button){}
 
     function __invoke(): string {

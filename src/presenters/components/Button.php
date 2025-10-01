@@ -1,9 +1,9 @@
 <?php namespace Components;
 
-use Utilities\Html;
+use Utilities\Renderer;
 
 class Button {
-    use Html;   
+    use Renderer;   
     function __invoke(string $text): string {
         return $this->render("components/button", [
             "content" => $text,

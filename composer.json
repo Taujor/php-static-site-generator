@@ -1,9 +1,7 @@
 {
     "require": {
-        "mikecao/flight": "^3.17",
         "php-di/php-di": "^7.1",
-        "friendsofphp/proxy-manager-lts": "^1.0",
-        "delight-im/auth": "^9.0"
+        "friendsofphp/proxy-manager-lts": "^1.0"
     },
     "autoload": {
         "psr-4": {

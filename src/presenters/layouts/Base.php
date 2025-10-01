@@ -1,9 +1,9 @@
 <?php namespace Layouts;
 
-use Utilities\Html;
+use Utilities\Renderer;
 
 class Base {
-    use Html;
+    use Renderer;
     function __invoke(string $content) :string {
         return $this->render("layouts/base", [
             "content" => $content

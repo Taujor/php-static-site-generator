@@ -30,7 +30,7 @@ Running a development server
 php -S localhost:8080 public/index.html 
 ```
 
-## Thinking Behind the Structure
+## Thinking Behind The Structure
 
 - **`presenters/`**: Each PHP class is an **invokable component**.  
   - Example: `Header.php` holds the logic for rendering a `<header>`.  
@@ -67,4 +67,12 @@ Contributions are welcome! Whether it’s bug fixes, optimizations, or new ideas
 - **Minimalism First** – The project is intentionally lightweight. Avoid adding heavy libraries or complex abstractions unless absolutely necessary for developer experience.  
 - **Developer-Friendly Workflow** – Components should remain easy to understand and compose. Prefer clarity and simplicity over cleverness.  
 - **Consistency** – Follow the existing structure: `presenters/` for logic, `views/` for templates, `utilities/` for helpers.  
-- **Backward Compatibility** – Try not to break existing APIs or templates unless there’s a clear improvement or refactor that benefits overall simplicity or developer experience.
+- **Backward Compatibility** – Try not to break existing APIs unless there’s a clear improvement or refactor that benefits overall simplicity or developer experience.
+
+---
+
+## Planned Features
+- **Full PSR-4 compliance** - Fully adhere to the PSR-4 autoloading standard
+- **Interfaces** - Add "Renderable" & "Composable" interfaces to assist in defining components and setting expectations as to their API 
+- **Intelisense support** - Add docblocks to traits & interfaces
+- **Tutorials** - helpful for implementing additional features outside the scope of this project, like localization, pagination, and markdown support.

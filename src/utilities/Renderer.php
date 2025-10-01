@@ -1,5 +1,5 @@
 <?php namespace Utilities;
-trait Html {
+trait Renderer {
     protected function render(string $filename, array $data): string {
         extract($data, EXTR_SKIP);
         ob_start();
