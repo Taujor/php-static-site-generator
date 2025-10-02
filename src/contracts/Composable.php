@@ -3,7 +3,7 @@
 namespace Contracts;
 
 /**
- * Represents a composable object that can be invoked to produce
+ * Represents a `Composable` object that can be invoked to produce
  * a html output string. 
  *
  * This is typically used for page-level presenters or high-level component presenters
