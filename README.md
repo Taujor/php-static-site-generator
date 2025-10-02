@@ -73,6 +73,6 @@ Contributions are welcome! Whether it’s bug fixes, optimizations, or new ideas
 
 ## Planned Features
 - [x] **Full PSR-4 compliance** - Fully adhere to the PSR-4 autoloading standard
-- [] **Interfaces** - Add "Renderable" & "Composable" interfaces to assist in defining components and setting expectations as to their API 
-- [] **Intelisense support** - Add docblocks to traits & interfaces
-- [] **Tutorials** - helpful for implementing additional features outside the scope of this project, like localization, pagination, and markdown support.
+- [ ] **Interfaces** - Add "Renderable" & "Composable" interfaces to assist in defining components and setting expectations as to their API 
+- [ ] **Intelisense support** - Add docblocks to traits & interfaces
+- [ ] **Tutorials** - helpful for implementing additional features outside the scope of this project, like localization, pagination, and markdown support.
