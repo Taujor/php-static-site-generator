@@ -8,6 +8,7 @@ class Home {
 
     function __invoke() :string {
         return ($this->layout)(
+            "This text was concatenated in the 'Home' class." .
             ($this->header)()
         );
     }
