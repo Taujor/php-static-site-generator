@@ -1,6 +1,6 @@
 <?php namespace Utilities;
 trait Renderer {
-    protected function render(string $filename, array $data): string {
+    public function render(string $filename, array $data): string {
         extract($data, EXTR_SKIP);
         ob_start();
         include dirname(__DIR__) . "/views/" . $filename . ".php";

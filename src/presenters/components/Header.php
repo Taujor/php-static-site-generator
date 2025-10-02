@@ -1,8 +1,9 @@
 <?php namespace Presenters\Components;
 
+use Contracts\Renderable;
 use Utilities\Renderer;
 
-class Header {
+class Header implements Renderable {
     use Renderer;   
     function __construct(private Button $button){}
 
