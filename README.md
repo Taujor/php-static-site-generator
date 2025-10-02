@@ -40,7 +40,7 @@ php -S localhost:8080 public/index.html
   - Example: `header.php` defines the actual HTML structure for the header.  
   - Views don’t contain business logic they just display what presenters feed them.  
 
-- **`utilities/`**: Small helpers like `Html` that handle repetitive tasks (e.g. output buffering and rendering).  
+- **`utilities/`**: Small helpers like `Renderer` that handle repetitive tasks (e.g. output buffering and rendering).  
 
 - **`layouts/`**: Reusable page skeletons. Presenters (like `Base.php`) map to layout views (like `base.php`).  
 
