@@ -32,6 +32,9 @@ php -S localhost:8080 public/index.html
 
 ## Thinking Behind The Structure
 
+- **`contracts/`**: Holds interfaces that define shared behaviors across the application (e.g. `Renderable`, `Composable`).
+These provide clear contracts for how different classes interact, making components (for example) interchangeable and easier to document as well as integrating with unit testing frameworks.
+
 - **`presenters/`**: Each PHP class is an **invokable component**.  
   - Example: `Header.php` holds the logic for rendering a `<header>`.  
   - These presenters pass data to the corresponding **view template**.  
