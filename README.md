@@ -32,6 +32,12 @@ php -S localhost:8080 public/index.html
 
 ## Thinking Behind The Structure
 
+- **`config/`**: Bootstrap and setup code (autoloaders, environment, etc).  
+
+- **`public/`**: Web-facing assets and build directory. HTML entry points, CSS, JS. Keeps PHP source code out of the document root.  
+
+- **`scripts/`**: Development/build or other server-side tooling.  
+
 - **`contracts/`**: Holds interfaces that define shared behaviors across the application (e.g. `Renderable`, `Composable`).
 These provide clear contracts for how different classes interact, making components (for example) interchangeable and easier to document as well as integrating with unit testing frameworks.
 
@@ -39,21 +45,17 @@ These provide clear contracts for how different classes interact, making compone
   - Example: `Header.php` holds the logic for rendering a `<header>`.  
   - These presenters pass data to the corresponding **view template**.  
 
-- **`views/`**: Contains the **raw PHP templates** (markup only).  
-  - Example: `header.php` defines the actual HTML structure for the header.  
-  - Views don’t contain business logic they just display what presenters feed them.  
-
-- **`utilities/`**: Small helpers like `Renderer` that handle repetitive tasks (e.g. output buffering and rendering).  
+- **`components/`**: Reusable building blocks of the UI (buttons, headers, footers, etc.). Each component has a presenter `Header.php` and a view `header.php`. Components are composed into larger structures such as layouts and pages.  
 
 - **`layouts/`**: Reusable page skeletons. Presenters (like `Base.php`) map to layout views (like `base.php`).  
 
 - **`pages/`**: Page-level presenters that compose components and layouts together to form a complete page.  
 
-- **`public/`**: Web-facing assets and build directory. HTML entry points, CSS, JS. Keeps PHP source code out of the document root.  
+- **`utilities/`**: Small helpers like `Renderer` that handle repetitive tasks (e.g. output buffering and rendering).  
 
-- **`config/`**: Bootstrap and setup code (autoloaders, environment, etc).  
-
-- **`scripts/`**: Development/build or other server-side tooling.  
+- **`views/`**: Contains the **raw PHP templates** (markup only). They are organized according to their presenter counterparts.  
+  - Example: `views/components/header.php` defines the actual HTML structure for the header component `presenters/components/Header.php`.  
+  - Views don’t contain business logic they just display what presenters feed them.  
 
 ---
 
