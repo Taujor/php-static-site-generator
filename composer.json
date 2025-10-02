@@ -5,9 +5,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Components\\": "src/presenters/components",
-            "Layouts\\": "src/presenters/layouts",
-            "Pages\\": "src/presenters/pages",
+            "Contracts\\": "src/contracts",
+            "Presenters\\Components\\": "src/presenters/components",
+            "Presenters\\Layouts\\": "src/presenters/layouts",
+            "Presenters\\Pages\\": "src/presenters/pages",
             "Utilities\\": "src/utilities"
         }
     }

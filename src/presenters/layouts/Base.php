@@ -1,4 +1,4 @@
-<?php namespace Layouts;
+<?php namespace Presenters\Layouts;
 
 use Utilities\Renderer;
 

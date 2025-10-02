@@ -1,4 +1,4 @@
-<?php namespace Components;
+<?php namespace Presenters\Components;
 
 use Utilities\Renderer;
 

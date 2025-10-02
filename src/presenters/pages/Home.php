@@ -1,7 +1,7 @@
-<?php namespace Pages;
+<?php namespace Presenters\Pages;
 
-use Layouts\Base;
-use Components\Header;
+use Presenters\Layouts\Base;
+use Presenters\Components\Header;
 
 class Home {
     function __construct(private Header $header, private Base $layout){}
