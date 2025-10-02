@@ -7,7 +7,7 @@ namespace Contracts;
  * a html output string. 
  *
  * This is typically used for page-level presenters or high-level component presenters
- * that assemble multiple sub-components and/or layouts.
+ * that have sub-component and/or layout dependencies.
  */
 interface Composable
 {
@@ -20,7 +20,7 @@ interface Composable
      * ```php
      * class Home implements Composable {
      *     // dependencies injected into the constructor in this example are implementing the "Renderable" interface 
-     *     public function __construct(private Header $header, private Base $layout, private Button $button) {}
+     *     public function __construct(private Button $button, private Header $header, private Base $layout) {}
      *
      *     public function __invoke(): string {
      *         return ($this->layout)(
