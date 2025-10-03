@@ -15,6 +15,12 @@ interface Composable
      * Composable classes should combine any internal components, layouts,
      * or content into a single string. It is recommended to use `Renderable`
      * objects by concatenating their output into a final string.
+     * Any arguments passed to `__invoke()` should be interpreted by the
+     * `Composable` as data to pass to its internal sub-components or layout. 
+     * 
+     * Ensure that when passing arguments they have a default value
+     * `__invoke($text)` will throw a `PHP Fatal Error`
+     * instead use `__invoke($text = "")`.
      *
      * Example implementation:
      * ```php
@@ -37,10 +43,7 @@ interface Composable
      * echo $home(); // returns the html string
      * ```
      *
-     * Any arguments passed to `__invoke()` should be interpreted by the
-     * `Composable` as data to pass to its internal sub-components or layout.
-     *
-     * @param mixed ...$args Dynamic data to pass to the sub-component or layout.
+     * @param mixed ...$any Arguments representing dynamic data to pass to the sub-component or layout.
      * @return string The composed html output string.
      */
     public function __invoke(): string;

@@ -19,11 +19,15 @@ interface Renderable {
      *   `$button("Click me", "/hello");`
      * The first argument could be rendered as `<?= $text ?>` in the view,
      * and the second as a part of a href attribute.
+     * 
+     *  Ensure that when passing arguments to `__invoke`
+     * they have a default value `__invoke($text)` will throw a `PHP Fatal Error`
+     * instead use `__invoke($text = "")`.
      *
-     * @param mixed ...$args Variable arguments representing dynamic data to pass to the view.
+     * @param mixed ...$any Arguments representing dynamic data to pass to the view.
      * @return string The rendered html output, typically returned from the `render()` method.
      */
-    public function __invoke(...$args): string;
+    public function __invoke(): string;
     /**
      * Render a view template with optional data.
      *
@@ -31,7 +35,7 @@ interface Renderable {
      * available in the view. For example, if `$data = ['text' => 'Click me']`,
      * you can use `<?= $text ?>` in your view file.
      *
-     * @param string $filename The relative path of the template in the 'views' directory (without the '.php' extension) `components/button` for example.
+     * @param string $view The relative path of the template in the 'views' directory (without the '.php' extension) `components/button` for example.
      * @param array $data An associative array of key/value pairs to pass to the view.
      * @return string The rendered html output string.
      */
