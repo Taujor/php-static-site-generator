@@ -1,4 +1,5 @@
 <?php namespace Utilities;
+
 trait Renderer {
     public function render(string $view, array $data = []): string {
         extract($data, EXTR_SKIP);
