@@ -1,6 +1,4 @@
-<?php
-
-namespace Contracts;
+<?php namespace Contracts;
 
 /**
  * Represents a `Composable` object that can be invoked to produce
