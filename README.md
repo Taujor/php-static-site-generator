@@ -35,6 +35,34 @@ Running a development server
 php -S localhost:8080 public/index.html 
 ```
 
+## Build scripts
+
+The `Builder` class compiles your `Renderable` or `Composable` pages into static HTML files. Your build scripts are plain PHP files you can add to the "scripts" directory. You'll find the default "build.php" there already.
+
+```php
+use Utilities\Builder;
+use Presenters\Pages\Home;
+
+Builder::compile(Home::class, "/index.html");
+```
+
+`Builder::compile()` works like a simple router, first you specify the page class, then the target output path relative to the `public` directory.
+
+```php
+Builder::build(
+    [Home::class, "/hello/index.html"],
+    [Home::class, "/world/index.html"]
+);
+```
+
+With `Builder::build` you are able to run `Builder::compile` against multiple target paths. This is the recommended approach for generating your entire site in one call.
+
+```php
+require dirname(__DIR__) . "/config/bootstrap.php";
+```
+
+Before building your script make sure you require the "bootstrap.php" file since each script is an entry point to the application. If your script depends on another script that has already required bootstrap.php, you don’t need to require it again.
+
 ## Thinking Behind The Structure
 
 - **`config/`**: Bootstrap and setup code (autoloaders, environment, etc).  
