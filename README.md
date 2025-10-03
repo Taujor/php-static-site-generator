@@ -35,6 +35,11 @@ Running a development server
 php -S localhost:8080 public/index.html 
 ```
 
+Disconnect from github repository
+```bash
+rm -r .git
+```
+
 ## Thinking Behind The Structure
 
 - **`config/`**: Bootstrap and setup code (autoloaders, environment, etc).  
