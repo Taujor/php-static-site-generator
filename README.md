@@ -20,6 +20,11 @@ This project uses **invokable component classes** and **output buffering** to pr
 
 ## Usage
 
+Install dependencies
+```bash
+composer install
+```
+
 Generates a minified html "index.html" file in "/public" 
 ```bash
 php scripts/build.php
