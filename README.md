@@ -113,4 +113,5 @@ Contributions are welcome! Whether it’s bug fixes, optimizations, or new ideas
 - [x] **Full PSR-4 compliance** - Fully adhere to the PSR-4 autoloading standard
 - [x] **Interfaces** - Add "Renderable" & "Composable" interfaces to assist in defining components and setting expectations as to their API 
 - [x] **Intelisense support** - Add docblocks to ~~traits~~ & interfaces
+- [ ] **Templates** - Create opensource templates ready to use for multiple types of static website (brochure, blog, landing, etc).
 - [ ] **Tutorials** - helpful for implementing additional features outside the scope of this project, like localization, pagination, and markdown support.
