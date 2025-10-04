@@ -32,7 +32,7 @@ php scripts/build.php
 
 Running a development server
 ```bash
-php -S localhost:8080 public/index.html 
+php -S localhost:8080 -t public
 ```
 
 ## Build scripts
