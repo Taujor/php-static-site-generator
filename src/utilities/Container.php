@@ -7,8 +7,8 @@ class Container {
 
     public static function create(): \DI\Container {
         $containerBuilder = new ContainerBuilder();
-        $containerBuilder->enableCompilation(dirname(__DIR__) . "/cache");
-        $containerBuilder->writeProxiesToFile(true, "../" . __DIR__ . '/cache/proxies');
+        $containerBuilder->enableCompilation(dirname(dirname(__DIR__)) . "/cache");
+        $containerBuilder->writeProxiesToFile(true, dirname(dirname(__DIR__)) . '/cache/proxies');
         return $containerBuilder->build();
     }
 
