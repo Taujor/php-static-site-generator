@@ -12,22 +12,22 @@ This project uses **invokable component classes** and **output buffering** to pr
 - Supports “slots” by passing data/HTML into templates  
 - Highly portable, works well in any php environment
 - Easy native debugging
+- Full PSR-4 compliance
+- `Renderable` & `Composable` interfaces to assist in defining components, testing, and setting expectations as to their API 
+- In editor tooltips via docblocks
+- Incremental builds (via md5 hash comparison)
+
 
 ## Requirements
 
 - PHP 8.1+ (typed properties & short closures recommended)
 - Composer (for autoloading)
 
-## Usage
+## Installation
 
 Install dependencies
 ```bash
-composer install
-```
-
-Generates a minified html "index.html" file in "/public" 
-```bash
-php scripts/build.php
+composer require taujor/phpssg
 ```
 
 Running a development server
@@ -35,16 +35,18 @@ Running a development server
 php -S localhost:8080 public/index.html 
 ```
 
-## Thinking Behind The Structure
+## Usage
+
+
+
+
+## Suggested Project Structure
 
 - **`config/`**: Bootstrap and setup code (autoloaders, environment, etc).  
 
 - **`public/`**: Web-facing assets and build directory. HTML entry points, CSS, JS. Keeps PHP source code out of the document root.  
 
 - **`scripts/`**: Development/build or other server-side tooling.  
-
-- **`contracts/`**: Holds interfaces that define shared behaviors across the application (e.g. `Renderable`, `Composable`).
-These provide clear contracts for how different classes interact, making components (for example) interchangeable and easier to document as well as integrating with unit testing frameworks.
 
 - **`presenters/`**: Each PHP class is an **invokable component**.  
   - Example: `Header.php` holds the logic for rendering a `<header>`.  
@@ -82,7 +84,7 @@ Contributions are welcome! Whether it’s bug fixes, optimizations, or new ideas
 ---
 
 ## Planned Features
-- [x] **Full PSR-4 compliance** - Fully adhere to the PSR-4 autoloading standard
-- [x] **Interfaces** - Add "Renderable" & "Composable" interfaces to assist in defining components and setting expectations as to their API 
-- [x] **Intelisense support** - Add docblocks to ~~traits~~ & interfaces
-- [ ] **Tutorials** - helpful for implementing additional features outside the scope of this project, like localization, pagination, and markdown support.
+- [ ] **Caching** - will be especially helpful in large projects with 1000's of pages and will reduce build time across the board. 
+- [ ] **Documentation** - phpssg.com will be a documentation website dedicated to this static site generator and it's community.
+- [ ] **Templates** - premade templates to serve as examples of how a phpssg website is structured and also as a good starting point for your projects.
+- [ ] **Tutorials** - phpssg.com will have a blog containing tutorials on how to use this project to it's full potential.
