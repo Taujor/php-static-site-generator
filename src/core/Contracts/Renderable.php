@@ -1,4 +1,4 @@
-<?php namespace Contracts;
+<?php namespace Taujor\PHPSSG\Contracts;
 
 /**
  * Represents a `Renderable` object that can be invoked to produce

@@ -1,4 +1,4 @@
-<?php namespace Utilities;
+<?php namespace Taujor\PHPSSG\Utilities;
 
 trait Renderer {
     public function render(string $view, array $data = []): string {

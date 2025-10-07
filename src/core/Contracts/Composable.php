@@ -1,4 +1,4 @@
-<?php namespace Contracts;
+<?php namespace Taujor\PHPSSG\Contracts;
 
 /**
  * Represents a `Composable` object that can be invoked to produce
@@ -7,8 +7,7 @@
  * This is typically used for page-level presenters or high-level component presenters
  * that have sub-component and/or layout dependencies.
  */
-interface Composable
-{
+interface Composable {
     /**
      * Composable classes should combine any internal components, layouts,
      * or content into a single string. It is recommended to use `Renderable`

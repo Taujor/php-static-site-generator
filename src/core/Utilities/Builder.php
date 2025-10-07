@@ -1,7 +1,7 @@
-<?php namespace Utilities;
+<?php namespace Taujor\PHPSSG\Utilities;
 
-use Utilities\Container;
-use Contracts\{Renderable, Composable};
+use Taujor\PHPSSG\Utilities\Container;
+use Taujor\PHPSSG\Contracts\{Renderable, Composable};
 
 class Builder {
 
@@ -26,14 +26,22 @@ class Builder {
             );
         }
 
-        $file = dirname(dirname(__DIR__)) . "/public$route";
-        $directory = dirname($file);
+        $content = self::minify($page());
 
+        $file = dirname(__DIR__, 2) . "/public$route";
+ 
+        $isUnchanged = is_file($file) && md5_file($file) === md5($content);
+
+        if ($isUnchanged) {
+            return 0;
+        }
+ 
+        $directory = dirname($file);
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
 
-        return file_put_contents($file, self::minify($page()));
+        return file_put_contents($file, $content);
     }
 
     public static function build(array ...$pages): void {
