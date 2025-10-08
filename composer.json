@@ -5,7 +5,8 @@
     "license": "",
     "require": {
         "php-di/php-di": "^7.1",
-        "friendsofphp/proxy-manager-lts": "^1.0"
+        "friendsofphp/proxy-manager-lts": "^1.0",
+        "composer/composer": "^2.8"
     },
     "autoload": {
         "psr-4": {

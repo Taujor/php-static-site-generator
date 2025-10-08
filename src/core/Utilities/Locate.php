@@ -1,11 +1,12 @@
 <?php namespace Taujor\PHPSSG\Utilities;
 
+use Composer\Factory;
+
 class Locate {
     public static function root(){
         if (\Phar::running()) {
             return dirname(\Phar::running(false));
         }
-        $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
-        return dirname($reflection->getFileName(), 3);
+        return dirname(Factory::getComposerFile());
     }
 }
