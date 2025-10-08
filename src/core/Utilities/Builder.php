@@ -18,15 +18,19 @@ class Builder {
         }
 
         $content = Minify::string($page());
-        $hash = md5_file($content);
+
         $file = Locate::root() . "/public$route";
+ 
+        $isUnchanged = is_file($file) && md5_file($file) === md5($content);
 
-        $isUnchanged = is_file($file) && md5_file($file) === $hash;
-
-        if ($isUnchanged) return 0;
+        if ($isUnchanged) {
+            return 0;
+        }
  
         $directory = dirname($file);
-        if (!is_dir($directory)) mkdir($directory, 0755, true);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
 
         return file_put_contents($file, $content);
     }
