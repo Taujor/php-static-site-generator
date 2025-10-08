@@ -2,6 +2,7 @@
 
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Contracts\{Renderable, Composable};
+use Taujor\PHPSSG\Utilities\Locate;
 
 class Builder {
 
@@ -28,7 +29,7 @@ class Builder {
 
         $content = self::minify($page());
 
-        $file = dirname(__DIR__, 2) . "/public$route";
+        $file = Locate::root() . "/public$route";
  
         $isUnchanged = is_file($file) && md5_file($file) === md5($content);
 

@@ -1,10 +1,12 @@
 <?php namespace Taujor\PHPSSG\Utilities;
 
+use Taujor\PHPSSG\Utilities\Locate;
+
 class Container {
     private static ?\DI\Container $instance = null;
 
     public static function create(): \DI\Container {
-        $root = dirname(__DIR__, 2);
+        $root = Locate::root();
         $cache = $root . "/cache";
         $proxy = $root . "/cache/proxies";
 

@@ -1,6 +1,8 @@
 {
     "name": "taujor/phpssg",
+    "description": "A lightweight static site generator, utilizing composable templates in pure PHP. This project uses a presenter -> view invokable component classes pattern to provide clean, composable, vanilla, php developer experience without a third-party templating engine.",
     "type": "library",
+    "license": "",
     "require": {
         "php-di/php-di": "^7.1",
         "friendsofphp/proxy-manager-lts": "^1.0"
