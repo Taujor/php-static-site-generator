@@ -1,12 +1,13 @@
 <?php namespace Taujor\PHPSSG\Utilities;
 
+use Phar;
 use Composer\Factory;
 
 class Locate {
-    public static function root(){
-        if (\Phar::running()) {
-            return getcwd();
-        }
-        return dirname(Factory::getComposerFile());
+    private static ?string $root = null;
+
+    public static function root(): string {
+        if(self::$root === null) Phar::running() ? self::$root = getcwd() : self::$root = dirname(Factory::getComposerFile());
+        return self::$root;
     }
 }

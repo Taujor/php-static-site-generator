@@ -3,19 +3,9 @@
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Contracts\{Renderable, Composable};
 use Taujor\PHPSSG\Utilities\Locate;
+use Taujor\PHPSSG\Utilities\Minify;
 
 class Builder {
-
-    private static function minify (string $html): string {
-        // Remove whitespace between tags
-        $html = preg_replace('/>\s+</', '><', $html);
-        // Collapse multiple spaces
-        $html = preg_replace('/\s+/', ' ', $html);
-        // Remove comments (except IE conditionals)
-        $html = preg_replace('/<!--(?!\[if).*?-->/', '', $html);
-
-        return trim($html);
-    }
 
     public static function compile(string $class, string $route): int|false {
         $container = Container::instance();
@@ -27,20 +17,16 @@ class Builder {
             );
         }
 
-        $content = self::minify($page());
-
+        $content = Minify::string($page());
+        $hash = md5_file($content);
         $file = Locate::root() . "/public$route";
- 
-        $isUnchanged = is_file($file) && md5_file($file) === md5($content);
 
-        if ($isUnchanged) {
-            return 0;
-        }
+        $isUnchanged = is_file($file) && md5_file($file) === $hash;
+
+        if ($isUnchanged) return 0;
  
         $directory = dirname($file);
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
+        if (!is_dir($directory)) mkdir($directory, 0755, true);
 
         return file_put_contents($file, $content);
     }
