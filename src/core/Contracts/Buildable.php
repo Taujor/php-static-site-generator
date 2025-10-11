@@ -5,6 +5,7 @@ use Taujor\PHPSSG\Utilities\Locate;
 
 abstract class Buildable {
     /**
+     * @method int|false compile(string $pattern, array|object|null $data)
      * Compile a single page into static HTML.
      *
      * @param array $data Data for the page
@@ -35,16 +36,26 @@ abstract class Buildable {
     }
 
     /**
+     * * @method void build(string $pattern, array|object|null $data)
      * Compile multiple pages from a dataset.
      *
      * @param array $dataset Array of associative arrays (each a post for example)
      * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
      */
-    public static function build(?string $pattern = null, array $dataset): void {
-        // this should return a stream of the amount of bytes being written
+    public static function build(string $pattern, iterable $dataset): int|false {
+        $bytesWritten = 0;
+
         foreach ($dataset as $data) {
-            self::compile($pattern, $data);
+            $result = self::compile($pattern, $data);
+
+            if ($result === false) {
+                return false;
+            }
+
+            $bytesWritten += $result;
         }
+
+        return $bytesWritten;
     }
 
     // add support for custom delimiters default to '{{ }}'
