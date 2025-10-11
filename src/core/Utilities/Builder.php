@@ -10,9 +10,9 @@ trait Builder
      * Compile a single page into static HTML.
      *
      * @param array $data Data for the page
-     * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
+     * @param string $pattern filename or filename pattern, e.g. "post-{{id}}.html" relative to "./public"
      */
-    public static function compile(?string $pattern = null, array|object $data): int|false {
+    public static function compile(string $pattern, array|object|null $data): int|false {
         $container = Container::instance();
         
         $buildable = $container->get(static::class);
