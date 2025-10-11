@@ -7,7 +7,7 @@
  * This is typically used for page-level presenters or high-level component presenters
  * that have sub-component and/or layout dependencies.
  */
-interface Composable {
+abstract class Composable {
     /**
      * Composable classes should combine any internal components, layouts,
      * or content into a single string. It is recommended to use `Renderable`
@@ -43,5 +43,6 @@ interface Composable {
      * @param mixed ...$any Arguments representing dynamic data to pass to the sub-component or layout.
      * @return string The composed html output string.
      */
-    public function __invoke(): string;
+    
+    abstract public function __invoke(): string;
 }

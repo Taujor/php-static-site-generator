@@ -1,12 +1,14 @@
 <?php namespace Taujor\PHPSSG\Contracts;
 
+use Taujor\PHPSSG\Utilities\Locate;
+
 /**
  * Represents a `Renderable` object that can be invoked to produce
  * a html output string. 
  *
  * This is typically used for component-level presenters with no sub-component or layout dependencies.
  */
-interface Renderable {
+abstract class Renderable {
      /**
      * Invoke the object as a callable.
      *
@@ -25,7 +27,7 @@ interface Renderable {
      * @param mixed ...$any Arguments representing dynamic data to pass to the view.
      * @return string The rendered html output, typically returned from the `render()` method.
      */
-    public function __invoke(): string;
+    abstract public function __invoke(): string;
     /**
      * Render a view template with optional data.
      *
@@ -37,5 +39,11 @@ interface Renderable {
      * @param array $data An associative array of key/value pairs to pass to the view.
      * @return string The rendered html output string.
      */
-    public function render(string $view, array $data = []): string;
+    
+    protected function render(string $view, array $data = []): string {
+        extract($data, EXTR_SKIP);
+        ob_start();
+        include Locate::root() . "/src/views/" . $view . ".php";
+        return ob_get_clean();
+    }
 }
