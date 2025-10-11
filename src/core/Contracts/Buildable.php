@@ -1,5 +1,9 @@
 <?php namespace Taujor\PHPSSG\Contracts;
 
+// ADD HOOKS NEXT
+// THEN DOCS
+// THEN MD5 HASH CACHE
+
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
 
@@ -11,7 +15,7 @@ abstract class Buildable {
      * @param array $data Data for the page
      * @param string $pattern filename or filename pattern, e.g. "post-{{id}}.html" relative to "./public"
      */
-    public static function compile(string $pattern, array|object|null $data): int|false {
+    public static function compile(string $pattern, array|object $data = []): int|false {
         $container = Container::instance();
         
         $buildable = $container->get(static::class);
