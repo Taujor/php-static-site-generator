@@ -50,7 +50,7 @@ trait Builder
     }
 
     // add support for custom delimiters default to '{{ }}'
-    protected static function resolve(string $pattern, array|object $data): string {
+    protected static function resolve(string $pattern, array|object|null $data): string {
         return preg_replace_callback('/{{\s*(.*?)\s*}}/', function($matches) use ($data) {
             $key = $matches[1];
         
@@ -61,6 +61,8 @@ trait Builder
             if (is_object($data)) {
                 return !property_exists($data, $key) ? "" : $data->$key;
             }
+
+            return "";
         
         }, $pattern);
     }
