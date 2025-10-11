@@ -10,6 +10,7 @@ use Taujor\PHPSSG\Utilities\Locate;
  */
 abstract class Renderable {
      /**
+     *  @method string __invoke(mixed $data = null) Subclasses must implement this method to render content.
      * Invoke the object as a callable.
      *
      * This allows the object to be composed with other `Renderable` or `Composable` objects.
@@ -27,7 +28,6 @@ abstract class Renderable {
      * @param mixed ...$any Arguments representing dynamic data to pass to the view.
      * @return string The rendered html output, typically returned from the `render()` method.
      */
-    abstract public function __invoke(): string;
     /**
      * Render a view template with optional data.
      *

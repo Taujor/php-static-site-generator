@@ -15,9 +15,9 @@ abstract class Buildable {
         
         $buildable = $container->get(static::class);
 
-        if (!($buildable instanceof Buildable)) {
+        if (!($buildable instanceof Buildable) || !is_callable($buildable)) {
             throw new \InvalidArgumentException(sprintf(
-                "Class '%s' must implement the 'Buildable' interface.", $buildable)
+                "Class '%s' must implement the 'Buildable' interface and be callable.", $buildable)
             );
         }
 
@@ -64,6 +64,4 @@ abstract class Buildable {
         
         }, $pattern);
     }
-
-    abstract public function __invoke(): string;
 }
