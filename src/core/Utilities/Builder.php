@@ -1,4 +1,4 @@
-<?php namespace Taujor\PHPSSG\Traits;
+<?php namespace Taujor\PHPSSG\Utilities;
 
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
@@ -58,8 +58,8 @@ trait Builder
                 return !array_key_exists($key, $data) ? "" : $data[$key];
             }
 
-             if (is_object($data)) {
-                return property_exists($data, $key) ? $data->$key : "";
+            if (is_object($data)) {
+                return !property_exists($data, $key) ? "" : $data->$key;
             }
         
         }, $pattern);
