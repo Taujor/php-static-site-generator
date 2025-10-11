@@ -12,7 +12,7 @@ trait Builder
      * @param array $data Data for the page
      * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
      */
-    public static function compile(array $data, ?string $pattern = null): int|false {
+    public static function compile(?string $pattern = null, array|object $data): int|false {
         $container = Container::instance();
         
         $buildable = $container->get(static::class);
@@ -23,7 +23,7 @@ trait Builder
             );
         }
 
-        $html = $buildable();
+        $html = $buildable($data);
 
         $file = self::resolve(Locate::root(). "/public" . $pattern, $data);
 
@@ -42,23 +42,26 @@ trait Builder
      * @param array $dataset Array of associative arrays (each a post for example)
      * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
      */
-    public static function build(array $dataset, ?string $pattern = null): void
+    public static function build(?string $pattern = null, array $dataset): void
     {
         foreach ($dataset as $data) {
-            self::compile($data, $pattern);
+            self::compile($pattern, $data);
         }
     }
 
     // add support for custom delimiters default to '{{ }}'
-    protected static function resolve(string $pattern, array $data): string {
+    protected static function resolve(string $pattern, array|object $data): string {
         return preg_replace_callback('/{{\s*(.*?)\s*}}/', function($matches) use ($data) {
             $key = $matches[1];
         
-            if (!array_key_exists($key, $data)) {
-                return "";
+            if (is_array($data)) {
+                return !array_key_exists($key, $data) ? "" : $data[$key];
+            }
+
+             if (is_object($data)) {
+                return property_exists($data, $key) ? $data->$key : "";
             }
         
-            return $data[$key];
         }, $pattern);
     }
 }
