@@ -1,43 +1,64 @@
-<?php namespace Taujor\PHPSSG\Utilities;
+<?php namespace Taujor\PHPSSG\Traits;
 
 use Taujor\PHPSSG\Utilities\Container;
-use Taujor\PHPSSG\Contracts\{Renderable, Composable};
 use Taujor\PHPSSG\Utilities\Locate;
-use Taujor\PHPSSG\Utilities\Minify;
+use Taujor\PHPSSG\Contracts\Buildable;
 
-class Builder {
-
-    public static function compile(string $class, string $route): int|false {
+trait Builder
+{
+    /**
+     * Compile a single page into static HTML.
+     *
+     * @param array $data Data for the page
+     * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
+     */
+    public static function compile(array $data, ?string $pattern = null): int|false {
         $container = Container::instance();
-        $page = $container->get($class);
+        
+        $buildable = $container->get(static::class);
 
-        if (!($page instanceof Renderable) && !($page instanceof Composable)) {
+        if (!($buildable instanceof Buildable)) {
             throw new \InvalidArgumentException(sprintf(
-                "Class '%s' must implement 'Renderable' or 'Composable'", $class)
+                "Class '%s' must implement the 'Buildable' interface.", $buildable)
             );
         }
 
-        $content = Minify::string($page());
+        $html = $buildable();
 
-        $file = Locate::root() . "/public$route";
- 
-        $isUnchanged = is_file($file) && md5_file($file) === md5($content);
+        $file = self::resolve(Locate::root(). "/public" . $pattern, $data);
 
-        if ($isUnchanged) {
-            return 0;
-        }
- 
-        $directory = dirname($file);
-        if (!is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
+        $isUnchanged = is_file($file) && md5_file($file) === md5($html);
+        if($isUnchanged) return 0;
 
-        return file_put_contents($file, $content);
+        $dir = dirname($file);
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        return file_put_contents($file, $html);
     }
 
-    public static function build(array ...$pages): void {
-        foreach ($pages as [$class, $route]) {
-            self::compile($class, $route);
+    /**
+     * Compile multiple pages from a dataset.
+     *
+     * @param array $dataset Array of associative arrays (each a post for example)
+     * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
+     */
+    public static function build(array $dataset, ?string $pattern = null): void
+    {
+        foreach ($dataset as $data) {
+            self::compile($data, $pattern);
         }
+    }
+
+    // add support for custom delimiters default to '{{ }}'
+    protected static function resolve(string $pattern, array $data): string {
+        return preg_replace_callback('/{{\s*(.*?)\s*}}/', function($matches) use ($data) {
+            $key = $matches[1];
+        
+            if (!array_key_exists($key, $data)) {
+                return "";
+            }
+        
+            return $data[$key];
+        }, $pattern);
     }
 }
