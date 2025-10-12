@@ -44,6 +44,6 @@ abstract class Renderable {
         extract($data, EXTR_SKIP);
         ob_start();
         include Locate::root() . "/src/views/" . $view . ".php";
-        return ob_get_clean();
+        return ob_get_clean() . "\n";
     }
 }
