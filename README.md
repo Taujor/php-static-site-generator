@@ -132,21 +132,20 @@ They will become more useful in the near future once hooks are released.
 ```php
 <?php namespace Taujor\PHPSSG\Utilities;
 
-class Minify {
-    public static function string (string $html): string {
-        // Remove whitespace between tags
-        $html = preg_replace('/>\s+</', '><', $html);
-        // Collapse multiple spaces
-        $html = preg_replace('/\s+/', ' ', $html);
-        // Remove comments (except IE conditionals)
-        $html = preg_replace('/<!--(?!\[if).*?-->/', '', $html);
+use Phar;
+use Composer\Factory;
 
-        return trim($html);
+class Locate {
+    private static ?string $root = null;
+
+    public static function root(): string {
+        if(self::$root === null) Phar::running() ? self::$root = getcwd() : self::$root = dirname(Factory::getComposerFile());
+        return self::$root;
     }
 }
 ```
 
-This utility class can be used to minify html strings, it's currently already in use in the core build & compile methods. Soon I plan to create hooks that allow you to easily write and include your own utilities in the build process.
+This utility class can be used to locate the root of a composer project, it's currently already in use throughout the project. Soon I plan to create hooks that allow you to easily write and include your own utilities in the build process.
 
 These are my recommendations. However, any **component, page, or presenter** can also extend any of the abstract classes: **Buildable**, **Composable**, **Renderable**. Depending on your specific use case for phpssg or programming style.
 
@@ -275,7 +274,7 @@ Everything else (`scripts/`, `presenters/`, `presenters/components/`, `presenter
 - **`presenters/pages/`** – page-level composables or buildables.  
 - **`views/components/`** – templates for Renderable components.  
 - **`views/layout/`** – templates for Renderable layouts.  
-- **`utilities/`** – helpers like `Minify`, `TwigRenderer`, `PrettyPrint`. Make them do anything!
+- **`utilities/`** – helpers like `Locate`, `TwigRenderer`, `PrettyPrint`. Make them do anything!
 
 This structure ensures:
 
