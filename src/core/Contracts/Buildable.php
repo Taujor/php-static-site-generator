@@ -47,7 +47,7 @@ abstract class Buildable
             );
         }
 
-        $html = Minify::string($buildable($data));
+        $html = $buildable($data);
 
         $file = self::resolve(Locate::root() . "/public" . $pattern, $data);
 
