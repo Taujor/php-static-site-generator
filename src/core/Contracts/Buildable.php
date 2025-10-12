@@ -2,7 +2,6 @@
 
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
-use Taujor\PHPSSG\Utilities\Minify;
 
 /**
  * Buildable
