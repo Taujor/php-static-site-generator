@@ -127,6 +127,8 @@ class Post extends Buildable
 - `$data` is then passed to components via `__invoke()`.  
 - Layouts wrap the combined HTML content.  
 
+These are my recommendations. However, any **component, page, or presenter** can also extend any of the abstract classes: **Buildable**, **Composable**, **Renderable**. Depending on your specific use case for phpssg or programming style.
+
 ### Utilities
 
 Utilities are typically helper classes that provide additional functionality to phpssg.
@@ -149,13 +151,69 @@ class Minify {
 }
 ```
 
-- This utility class can be used to minify html strings, it's currently already in use in the core build & compile methods. Soon (before 1.0) I plan to create hooks that allow you to easily write include your own utilities in the build process.
+- This utility class can be used to minify html strings, it's currently already in use in the core build & compile methods. Soon (before 1.0) I plan to create hooks that allow you to easily write and include your own utilities in the build process.
 
 ---
 
-### Compile and Bulid methods
+### Views
 
-Any **component, page, or presenter** can also extend any of the abstract classes: **Buildable**, **Composable**, **Renderable**. Depending on how you want to organize your project and your use case for phpssg.
+- Stored in **`src/views/`** (mandatory directory).  
+- Only **Renderables** have view templates. **Composables** and **Buildables** don't require view templates.  
+- Views are plain php templates I recommend their directory structure mirrors that of `presenters/`:
+
+```text
+src/
+└── views/
+├── components/
+│ └── title.php
+└── layouts/
+  └── base.php
+```
+
+- The `render()` method in **Renderable** extracts variables into the template and captures the output.  
+- **No escaping is necessary** — all data comes from trusted sources.  
+
+---
+
+### Build scripts
+
+This is the entry point of the application often placed in the `scripts` directory at the root of your project. They call on **Buildable** presenters to generate html. For example:
+
+```php
+
+<?php
+
+require dirname(__DIR__) . "/vendor/autoload.php";
+
+use Presenters\Pages\Post;
+
+$data = [
+    (object) [
+        'id' => 1,
+        'slug' => 'first-post',
+        'title' => 'First Post',
+        'content' => 'Hello'
+    ],
+    (object) [
+        'id' => 2,
+        'slug' => 'second-post',
+        'title' => 'Second Post',
+        'content' => 'World'
+    ],
+];
+
+Post::build("/posts/post-{{id}}.html", $data);
+
+Post::compile("/posts/post-3.html", (object)[
+    'id' => 3,
+    'slug' => 'third-post',
+    'title' => 'Third Post',
+    'content' => 'Hello Again'
+]);
+
+```
+
+## Compile and Bulid methods
 
 ```php
 // Compile a single page
@@ -196,26 +254,6 @@ Post::build("/posts/{{slug}}.html", $dataset);
   Each `{{key}}` is replaced with the corresponding key from the dataset item (array or object).  
 
 - Incremental builds ensure that files are only rewritten if content changes. Full caching support is in development.
-
----
-
-### Views
-
-- Stored in **`src/views/`** (mandatory directory).  
-- Only **Renderables** have view templates. **Composables** and **Buildables** don't require view templates.  
-- Views are plain php templates I recommend their directory structure mirrors that of `presenters/`:
-
-```text
-src/
-└── views/
-├── components/
-│ └── title.php
-└── layouts/
-  └── base.php
-```
-
-- `render()` extracts variables into the template and captures the output.  
-- **No escaping is necessary** — all data comes from trusted sources.  
 
 ---
 
