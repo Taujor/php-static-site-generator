@@ -80,7 +80,7 @@ class Heading extends Composable {
     }
 }
 ```
-- Components are typically **Renderables** such as `Title` and `Subtitle` (in this example) they have their own respective template files, however our `Heading` class simply takes these two templates and "composes" them into a new component (via string concatenation in this case). Hence it does not require its own template file.
+`Title` and `Subtitle` are **Renderables** (in this example) they have their own respective template files, however our `Heading` class simply takes these two templates and "composes" them into a new component (via string concatenation in this case). Hence it does not require its own template file and can be invoked just the same as any other presenter.
 
 ```php
 <!-- src/views/layouts/base.php -->
@@ -122,12 +122,7 @@ class Post extends Buildable
 }
 ```
 
-- Pages often combine components and layouts.  
-- `$data` is passed to the page during the build process
-- `$data` is then passed to components via `__invoke()`.  
-- Layouts wrap the combined HTML content.  
-
-These are my recommendations. However, any **component, page, or presenter** can also extend any of the abstract classes: **Buildable**, **Composable**, **Renderable**. Depending on your specific use case for phpssg or programming style.
+Pages often combine components and layouts. `$data` is passed to the page during the build process. `$data` is then passed to components via `__invoke()`. Layouts wrap the combined HTML content.  
 
 ### Utilities
 
@@ -151,7 +146,9 @@ class Minify {
 }
 ```
 
-- This utility class can be used to minify html strings, it's currently already in use in the core build & compile methods. Soon (before 1.0) I plan to create hooks that allow you to easily write and include your own utilities in the build process.
+This utility class can be used to minify html strings, it's currently already in use in the core build & compile methods. Soon I plan to create hooks that allow you to easily write and include your own utilities in the build process.
+
+These are my recommendations. However, any **component, page, or presenter** can also extend any of the abstract classes: **Buildable**, **Composable**, **Renderable**. Depending on your specific use case for phpssg or programming style.
 
 ---
 
@@ -247,13 +244,11 @@ Post::build("/posts/{{slug}}.html", $dataset);
 
 - `compile(string $pattern, array|object $data = [])` writes a single file.  
 - `build(string $pattern, iterable $dataset)` writes multiple files iteratively.  
-- **Placeholders** use the syntax `{{key}}` in the file path or filename:  
-  ```php
-  "/posts/{{slug}}.html"
-  ```
-  Each `{{key}}` is replaced with the corresponding key from the dataset item (array or object).  
-
-- Incremental builds ensure that files are only rewritten if content changes. Full caching support is in development.
+**Placeholders** use the syntax `{{key}}` in the file path or filename:  
+```php
+"/posts/{{slug}}.html"
+```
+Each `{{key}}` is replaced with the corresponding key from the dataset item (array or object). Incremental builds ensure that files are only rewritten if content changes. Full caching support is in development.
 
 ---
 
