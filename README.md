@@ -225,16 +225,16 @@ Post::compile("/posts/post1.html", (object)[
 
 $dataset = [
     (object) [
-        'id' => 1,
-        'slug' => 'first-post',
-        'title' => 'First Post',
-        'content' => 'Hello'
-    ],
-    (object) [
         'id' => 2,
         'slug' => 'second-post',
         'title' => 'Second Post',
         'content' => 'World'
+    ],
+    (object) [
+        'id' => 3,
+        'slug' => 'third-post',
+        'title' => 'Third Post',
+        'content' => 'Hello Again'
     ],
 ];
 
