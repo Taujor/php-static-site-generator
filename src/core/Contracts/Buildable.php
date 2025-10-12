@@ -1,21 +1,42 @@
 <?php namespace Taujor\PHPSSG\Contracts;
 
-// ADD HOOKS NEXT
-// THEN DOCS
-// THEN MD5 HASH CACHE
-
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
+use Taujor\PHPSSG\Utilities\Minify;
 
-abstract class Buildable {
+/**
+ * Buildable
+ *
+ * Abstract base class for objects that can generate static HTML files
+ * from templates and datasets. Provides methods for compiling a single
+ * template and building multiple files from an iterable dataset.
+ *
+ * Child classes must implement the __invoke() method and be callable.
+ * 
+ * @package Taujor\PHPSSG\Contracts
+ * 
+ * @method string|false __invoke(array|object $data = []) Render the buildable component with provided data and return HTML.
+ * @method static int|false compile(string $pattern, array|object $data = []) Compile a single template pattern with data and write to file.
+ * @method static int|false build(string $pattern, iterable $dataset) Build multiple files from an iterable dataset.
+ *
+ */
+abstract class Buildable
+{
     /**
-     * @method int|false compile(string $pattern, array|object|null $data)
-     * Compile a single page into static HTML.
+     * Compiles a template pattern with provided data and writes it to a file.
      *
-     * @param array $data Data for the page
-     * @param string $pattern filename or filename pattern, e.g. "post-{{id}}.html" relative to "./public"
+     * The method resolves placeholders in the pattern using the data provided,
+     * writes the generated HTML to a resolved file path under the public directory,
+     * and avoids overwriting unchanged files using an MD5 hash comparison.
+     *
+     * @param string $pattern Template pattern with placeholders.
+     * @param array|object $data Data to replace placeholders in the template.
+     * @return int|false Number of bytes written, 0 if file unchanged, or false on failure.
+     *
+     * @throws \InvalidArgumentException If the class is not callable or does not extend Buildable.
      */
-    public static function compile(string $pattern, array|object $data = []): int|false {
+    public static function compile(string $pattern, array|object $data = []): int|false
+    {
         $container = Container::instance();
         
         $buildable = $container->get(static::class);
@@ -26,12 +47,12 @@ abstract class Buildable {
             );
         }
 
-        $html = $buildable($data);
+        $html = Minify::string($buildable($data));
 
-        $file = self::resolve(Locate::root(). "/public" . $pattern, $data);
+        $file = self::resolve(Locate::root() . "/public" . $pattern, $data);
 
         $isUnchanged = is_file($file) && md5_file($file) === md5($html);
-        if($isUnchanged) return 0;
+        if ($isUnchanged) return 0;
 
         $dir = dirname($file);
         if (!is_dir($dir)) mkdir($dir, 0755, true);
@@ -40,14 +61,18 @@ abstract class Buildable {
     }
 
     /**
-     * * @method void build(string $pattern, array|object|null $data)
-     * Compile multiple pages from a dataset.
+     * Builds multiple files from an iterable dataset.
      *
-     * @param array $dataset Array of associative arrays (each a post for example)
-     * @param string|null $pattern Optional file name pattern, e.g. "post-{{id}}.html"
+     * Iterates over the dataset and calls compile() for each item.
+     * Returns the total number of bytes written or false if any compile fails.
+     *
+     * @param string $pattern Template pattern with placeholders.
+     * @param iterable $dataset Array or object iterable containing data items.
+     * @return int|false Total bytes written, or false on failure.
      */
-    public static function build(string $pattern, iterable $dataset): int|false {
-        $bytesWritten = 0;
+    public static function build(string $pattern, iterable $dataset): int|false
+    {
+        $bytes = 0;
 
         foreach ($dataset as $data) {
             $result = self::compile($pattern, $data);
@@ -56,14 +81,24 @@ abstract class Buildable {
                 return false;
             }
 
-            $bytesWritten += $result;
+            $bytes += $result;
         }
 
-        return $bytesWritten;
+        return $bytes;
     }
 
-    // add support for custom delimiters default to '{{ }}'
-    protected static function resolve(string $pattern, array|object|null $data): string {
+    /**
+     * Resolves placeholders in a template pattern using provided data.
+     *
+     * Placeholders in the template should use the default delimiters '{{ }}'.
+     * Supports arrays and objects for replacement.
+     *
+     * @param string $pattern Template pattern containing placeholders.
+     * @param array|object|null $data Data to replace placeholders.
+     * @return string Pattern with placeholders replaced by actual data.
+     */
+    protected static function resolve(string $pattern, array|object|null $data): string
+    {
         return preg_replace_callback('/{{\s*(.*?)\s*}}/', function($matches) use ($data) {
             $key = $matches[1];
         

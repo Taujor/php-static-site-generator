@@ -3,43 +3,28 @@
 use Taujor\PHPSSG\Utilities\Locate;
 
 /**
- * Represents a `Renderable` object that can be invoked to produce
- * a html output string. 
+ * Class Renderable
  *
- * This is typically used for component-level presenters with no sub-component or layout dependencies.
+ * Abstract base class for components that can render plain php view templates.
+ * Provides a helper method to include view templates
+ * with optional data.
+ *
+ * @package Taujor\PHPSSG\Contracts
+ * 
+ * @method string render(string $view, array $data = []) Render a plain php view template with optional data and return its HTML.
  */
 abstract class Renderable {
-     /**
-     *  @method string __invoke(mixed $data = null) Subclasses must implement this method to render content.
-     * Invoke the object as a callable.
-     *
-     * This allows the object to be composed with other `Renderable` or `Composable` objects.
-     * Any arguments passed to `__invoke()` are intended to provide **data for the view**. 
-     * 
-     * For example, a Button component might accept:
-     *   `$button("Click me", "/hello");`
-     * The first argument could be rendered as `<?= $text ?>` in the view,
-     * and the second as a part of a href attribute.
-     * 
-     *  Ensure that when passing arguments to `__invoke`
-     * they have a default value `__invoke($text)` will throw a `PHP Fatal Error`
-     * instead use `__invoke($text = "")`.
-     *
-     * @param mixed ...$any Arguments representing dynamic data to pass to the view.
-     * @return string The rendered html output, typically returned from the `render()` method.
-     */
     /**
-     * Render a view template with optional data.
+     * Renders a PHP view template with provided data.
      *
-     * The `$data` array provides variables to the template. Each key becomes a variable
-     * available in the view. For example, if `$data = ['text' => 'Click me']`,
-     * you can use `<?= $text ?>` in your view file.
+     * This method extracts the data array into variables available
+     * in the view, captures the output buffer, and returns the
+     * rendered HTML as a string with a trailing newline.
      *
-     * @param string $view The relative path of the template in the 'views' directory (without the '.php' extension) `components/button` for example.
-     * @param array $data An associative array of key/value pairs to pass to the view.
-     * @return string The rendered html output string.
+     * @param string $view Name of the plain php view template file (without .php extension) for example `component/filename` or 'layout/filename'.
+     * @param array $data Optional associative array of variables to pass to the view.
+     * @return string Rendered html content as a string.
      */
-    
     protected function render(string $view, array $data = []): string {
         extract($data, EXTR_SKIP);
         ob_start();
