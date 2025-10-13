@@ -69,7 +69,7 @@ abstract class Buildable {
 
         static::_beforeRender($data);
         $html = $buildable($data);
-        static::_afterRender($html);
+        static::_afterRender($html, $data);
 
         $file = self::resolve(Locate::root() . "/public" . $pattern, $data);
         static::_beforeWrite($file);
@@ -83,7 +83,7 @@ abstract class Buildable {
         }
 
         $bytes = file_put_contents($file, $html);
-        static::_afterWrite();
+        static::_afterWrite($bytes, $file);
 
         return $bytes;
     }
@@ -120,7 +120,7 @@ abstract class Buildable {
      * @param string $pattern Template pattern containing placeholders.
      * @param array|object|null $data Data to replace placeholders.
      * @param string $delimiters Placeholder delimiters separated by whitespace (default: '{{ }}').
-     * @return string Pattern with placeholders replaced by actual data.
+     * @return string Pattern with placeholders replaced by actual data, if the data key did not exist an empty string will be returned.
      */
     protected static function resolve(string $pattern, array|object|null $data, string $delimiters = "{{ }}"): string
     {
@@ -141,7 +141,7 @@ abstract class Buildable {
     }
 
     protected static function _beforeRender(array|object &$data): void {}
-    protected static function _afterRender(string &$html): void {}
+    protected static function _afterRender(string &$html, array|object &$data): void {}
     protected static function _beforeWrite(string &$file): void {}
-    protected static function _afterWrite(): void {}
+    protected static function _afterWrite(int|false &$bytes, string &$file): void {}
 }
