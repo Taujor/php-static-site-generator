@@ -44,10 +44,10 @@ abstract class Buildable {
      * overwriting unchanged files.
      *
      * Hooks are available for customization:
-     * - `_beforeRender(array|object &$data)`
-     * - `_afterRender(string &$html)`
-     * - `_beforeWrite(string &$file)`
-     * - `_afterWrite()`
+     * @method static void _beforeRender(array|object &$data)
+     * @method static void _afterRender(string &$html)
+     * @method static void _beforeWrite(string &$file)
+     * @method static void _afterWrite()
      *
      * @param string $pattern Placeholder pattern containing placeholders like `{{slug}}` or just plain text either resolves to a path relative to the build directory.
      * @param array|object $data Data to inject into the template.
