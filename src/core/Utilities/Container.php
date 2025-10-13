@@ -6,9 +6,8 @@ class Container {
     private static ?\DI\Container $instance = null;
 
     public static function create(): \DI\Container {
-        $root = Locate::root();
-        $cache = $root . "/cache";
-        $proxy = $root . "/cache/proxies";
+        $cache = Locate::cache();
+        $proxy = Locate::proxy();
 
         foreach ([$cache, $proxy] as $dir) {
             if (!is_dir($dir)) {

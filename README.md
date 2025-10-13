@@ -297,9 +297,9 @@ Contributions are welcome! Philosophy:
 ---
 
 ## Planned Features
-- [ ] **Packagist Release** - use composer to install phpssg with ease.
+- [*] **Packagist Release** - use composer to install phpssg with ease.
+- [*] **Hooks** - add extensibility to the build process.
 - [ ] **Caching** – reduce build times for large projects.  
-- [ ] **Hooks** - add extensibility to the build process.
 - [ ] **Documentation** – phpssg.com for guides and community resources.  
 - [ ] **Templates** – premade templates to start projects quickly.  
 - [ ] **Tutorials** – step-by-step guides on using PHPSSG effectively.  

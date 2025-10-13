@@ -72,7 +72,7 @@ abstract class Buildable {
         $html = $buildable($data);
         static::_afterRender($html, $data);
 
-        $file = self::resolve(Locate::root() . "/public" . $pattern, $data, $delimiters);
+        $file = self::resolve(Locate::build() . $pattern, $data, $delimiters);
         static::_beforeWrite($file);
 
         $isUnchanged = is_file($file) && hash("sha256", $file) === hash("sha256", $html);

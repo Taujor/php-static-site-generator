@@ -48,7 +48,7 @@ abstract class Renderable {
     protected function render(string $view, array $data = []): string {
         extract($data, EXTR_SKIP);
         ob_start();
-        include Locate::root() . "/src/views/" . $view . ".php";
+        include Locate::views() . $view . Locate::engine();
         return ob_get_clean() . "\n";
     }
 }
