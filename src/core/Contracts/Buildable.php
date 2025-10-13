@@ -51,13 +51,14 @@ abstract class Buildable {
      *
      * @param string $pattern Placeholder pattern containing placeholders like `{{slug}}` or just plain text either resolves to a path relative to the build directory.
      * @param array|object $data Data to inject into the template.
+     * @param string $delimiters Placeholder delimiters separated by whitespace (default: '{{ }}').
+     * 
      * @return int|false Number of bytes written, 0 if unchanged, or false on failure.
      *
      * @throws \InvalidArgumentException If the class is not callable or does not extend Buildable.
      * @throws \RuntimeException If the output directory cannot be created.
      */
-    public static function compile(string $pattern, array|object $data = []): int|false
-    {
+    public static function compile(string $pattern, array|object $data = [], string $delimiters = "{{ }}"): int|false {
         $container = Container::instance();
         $buildable = $container->get(static::class);
 
@@ -71,7 +72,7 @@ abstract class Buildable {
         $html = $buildable($data);
         static::_afterRender($html, $data);
 
-        $file = self::resolve(Locate::root() . "/public" . $pattern, $data);
+        $file = self::resolve(Locate::root() . "/public" . $pattern, $data, $delimiters);
         static::_beforeWrite($file);
 
         $isUnchanged = is_file($file) && hash("sha256", $file) === hash("sha256", $html);
@@ -96,14 +97,14 @@ abstract class Buildable {
      *
      * @param string $pattern Template pattern with placeholders.
      * @param iterable $dataset Array or object iterable containing data items.
+     * @param string $delimiters Placeholder delimiters separated by whitespace (default: '{{ }}').
      * @return int|false Total bytes written, or false on failure.
      */
-    public static function build(string $pattern, iterable $dataset): int|false
-    {
+    public static function build(string $pattern, iterable $dataset, string $delimiters = "{{ }}"): int|false {
         $bytes = 0;
 
         foreach ($dataset as $data) {
-            $result = self::compile($pattern, $data);
+            $result = self::compile($pattern, $data, $delimiters);
             if ($result === false) return false;
             $bytes += $result;
         }
@@ -122,10 +123,14 @@ abstract class Buildable {
      * @param string $delimiters Placeholder delimiters separated by whitespace (default: '{{ }}').
      * @return string Pattern with placeholders replaced by actual data, if the data key did not exist an empty string will be returned.
      */
-    protected static function resolve(string $pattern, array|object|null $data, string $delimiters = "{{ }}"): string
-    {
+    protected static function resolve(string $pattern, array|object|null $data, string $delimiters = "{{ }}"): string {
         $delimiters = preg_split("/\s+/", trim($delimiters));
-        return preg_replace_callback("/$delimiters[0]\s*(.*?)\s*$delimiters[1]/", function ($matches) use ($data) {
+        $delimiters = count($delimiters) < 2 ? ["{{", "}}"] : $delimiters;
+
+        $open = preg_quote($delimiters[0], '/');
+        $close = preg_quote($delimiters[1], '/');
+
+        return preg_replace_callback("/$open\s*(.*?)\s*$close/", function ($matches) use ($data) {
             $key = $matches[1];
 
             if (is_array($data)) {
