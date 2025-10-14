@@ -4,7 +4,7 @@ use Phar;
 use Composer\Factory;
 
 /**
- * Class Locate
+ * Locate
  *
  * Provides static utility methods for determining and caching
  * key filesystem paths used by the PHPSSG application.
