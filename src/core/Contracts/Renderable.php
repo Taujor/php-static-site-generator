@@ -49,6 +49,6 @@ abstract class Renderable {
         extract($data, EXTR_SKIP);
         ob_start();
         include Locate::views() . "/$view" . Locate::engine();
-        return ob_get_clean() . "\n";
+        return ob_get_clean();
     }
 }
