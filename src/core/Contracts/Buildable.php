@@ -75,7 +75,15 @@ abstract class Buildable {
         $file = self::resolve(Locate::build() . $pattern, $data, $delimiters);
         static::_beforeWrite($file);
 
-        $isUnchanged = is_file($file) && hash("sha256", $file) === hash("sha256", $html);
+        $isUnchanged = false;
+
+        if (is_file($file)) {
+            $existing = file_get_contents($file);
+            if (is_string($existing) && strlen($existing) === strlen($html)) {
+                $isUnchanged = hash('sha256', $existing) === hash('sha256', $html);
+            }
+        }
+
         if ($isUnchanged) return 0;
 
         $dir = dirname($file);
