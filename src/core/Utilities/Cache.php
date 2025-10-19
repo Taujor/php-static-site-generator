@@ -27,19 +27,9 @@ class Cache {
         $target = "$dir/$filename.hash";
         $hash = hash('xxh3', $content);
 
-        $temp = tempnam($dir, 'atomic_');
-        if ($temp === false) {
-            throw new \RuntimeException("Failed to create temporary file in: $dir");
-        }
 
-        if (file_put_contents($temp, $hash, LOCK_EX) === false) {
-            @unlink($temp);
-            throw new \RuntimeException("Failed to write atomic file: $temp");
-        }
-
-        if (!rename($temp, $target)) {
-            @unlink($temp);
-            throw new \RuntimeException("Failed to rename atomic file to: $target");
+        if (file_put_contents($target, $hash, LOCK_EX) === false) {
+            throw new \RuntimeException("Failed to write hash to file: $target");
         }
     }
 }
