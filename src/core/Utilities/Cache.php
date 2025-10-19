@@ -17,18 +17,29 @@ class Cache {
         return $hash; 
     }
 
-    public static function set($path, $content): void {
-        $hash = hash("xxh3", $content);
-
-        if (!is_dir(Locate::hashes()) && !mkdir(Locate::hashes(), 0755, true) && !is_dir(Locate::hashes())) {
-            throw new \RuntimeException("Failed to create directory: " . Locate::hashes());
+    public static function set(string $path, string $content): void {
+        $dir = Locate::hashes();
+        if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+            throw new \RuntimeException("Failed to create directory: $dir");
         }
 
-        $filename = hash("xxh3", $path);
-        if (file_put_contents(Locate::hashes() . "/$filename.hash", $hash) === false) {
-            throw new \RuntimeException("Failed to write file: " . Locate::hashes() . "/$filename.hash");
+        $filename = hash('xxh3', $path);
+        $target = "$dir/$filename.hash";
+        $hash = hash('xxh3', $content);
+
+        $temp = tempnam($dir, 'atomic_');
+        if ($temp === false) {
+            throw new \RuntimeException("Failed to create temporary file in: $dir");
+        }
+
+        if (file_put_contents($temp, $hash, LOCK_EX) === false) {
+            @unlink($temp);
+            throw new \RuntimeException("Failed to write atomic file: $temp");
+        }
+
+        if (!rename($temp, $target)) {
+            @unlink($temp);
+            throw new \RuntimeException("Failed to rename atomic file to: $target");
         }
     }
-
-
 }

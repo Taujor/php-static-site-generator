@@ -65,7 +65,7 @@ abstract class Buildable {
 
         if (!($buildable instanceof Buildable) || !is_callable($buildable)) {
             throw new \InvalidArgumentException(sprintf(
-                "Class '%s' must implement the 'Buildable' interface and be callable.", static::class)
+                "Class '%s' must extend the 'Buildable' abstract class and be callable.", static::class)
             );
         }
 
@@ -76,28 +76,29 @@ abstract class Buildable {
         $file = self::resolve(Locate::build() . $pattern, $data, $delimiters);
         static::_beforeWrite($file);
 
-        $isUnchanged = false;
-
-        $storedHash = Cache::get($file);
-
-        if(!$storedHash){
-            Cache::set($file, $html);
-        }        
-
-        $isUnchanged = $storedHash === hash('xxh3', $html) ? true : false;
-
-        if ($isUnchanged) return 0;
-
         $dir = dirname($file);
         if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
             throw new \RuntimeException("Failed to create directory: $dir");
         }
 
-        $bytes = file_put_contents($file, $html);
-        static::_afterWrite($bytes, $file);
+        $storedHash = Cache::get($file);
+        $newHash = hash('xxh3', $html);
 
+        if ($storedHash === $newHash) {
+            return 0;
+        }
+
+        $bytes = file_put_contents($file, $html);
+        if ($bytes === false) {
+            throw new \RuntimeException("Failed to write file: $file");
+        }
+
+        Cache::set($file, $html);
+
+        static::_afterWrite($bytes, $file);
         return $bytes;
     }
+
 
     /**
      * Builds multiple files from an iterable dataset.

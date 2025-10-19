@@ -8,24 +8,30 @@ PHPSSG uses **invokable component classes**, **output buffering**, and **plain P
 ## Features
 
 - **Plain PHP templates** – no special syntax to learn.  
-- **Invokable components** – use components like `$header()`.  
+- **Invokable components** – use components like `$header()`.
+- **Component based routing** – `Buildable` components get methods able to write the html they generate to a file.
+- **Hooks** – Hooks are available in the build process to easily inject your own custom code to manipulate content before or just after it is generated.  
 - **Centralized render helper** – avoids repeated `ob_start()` / `ob_get_clean()`.  
 - **Nesting & composition** – layouts can include multiple components.  
 - **Slots & data passing** – inject content into templates easily.  
-- **Incremental builds** – files are rewritten only if content changes (MD5 hash comparison).  
+- **Incremental builds** – files are rewritten only if content changes (xxh3 hash comparison).  
+- **Caching** – file paths and contents are hashed and atomically cached to disk.  
 - **Native debugging** – works seamlessly with standard PHP tools.  
 - **PSR-4 compliant** – fully autoloadable via Composer.  
-- **Interfaces** – `Renderable`, `Composable`, `Buildable` help define component APIs.  
+- **Abstract Classes** – `Renderable`, `Composable`, `Buildable` help define component APIs, they are fundamental to PHPSSG.  
 - **IDE-friendly** – docblocks provide autocomplete, type hints, and method signatures.  
 - **Highly portable** – works in any PHP 8.1+ environment.  
 - **Flexible structure** – pages, components, and presenters can each be **Buildable**, **Composable**, or **Renderable** depending on your project.
+- **Fast content comparison** – via xxh3 hashing.
+
 
 ---
 
 ## Requirements
 
-- PHP 8.1+ (typed properties & short closures recommended)  
-- Composer (for autoloading)
+- PHP 8.1+ (xxh3 hashing)  
+- Composer (autoloading)
+- PHP-DI (dependency injection)
 
 ---
 
@@ -47,20 +53,20 @@ php -S localhost:8080 public/index.html
 
 ## Usage
 
-In these examples all data comes from trusted developer sources, you. Consider escaping if you bring data in from untrusted sources. In any template you create.
-
 ### Layouts
 
 Layouts are typically **Renderables**:
 
 ```php
+<!-- src/presenters/layouts/Base.php -->
 use Taujor\PHPSSG\Contracts\Renderable;
 
 class Base extends Renderable
 {
     public function __invoke(string $content): string
     {
-        return $this->render("layouts/base.php", ["content" => $content]);
+        // the directory specified here is relative to your views directory ("src/views" by default)
+        return $this->render("layouts/base", ["content" => $content]);
     }
 }
 ```
@@ -70,17 +76,17 @@ class Base extends Renderable
 Components are typically **Renderables** (like layouts) or **Composables** :
 
 ```php
+<!-- src/presenters/components/Heading.php -->
 use Taujor\PHPSSG\Contracts\Composable;
 
 class Heading extends Composable {
     function __construct(private Title $title, private Subtitle $subtitle) {}
     function __invoke(): string {
-        return ($this->title)() .
-        ($this->subtitle)();
+        return ($this->title)() . ($this->subtitle)();
     }
 }
 ```
-`Title` and `Subtitle` are **Renderables** (in this example) they have their own respective template files, however our `Heading` class simply takes these two templates and "composes" them into a new component (via string concatenation in this case). Hence it does not require its own template file and can be invoked just the same as any other presenter.
+`Title` and `Subtitle` are **Renderables** (in this example) they have their own respective template files, however our `Heading` class simply takes these two components and "composes" them into a new component (via string concatenation in this case). Hence it does not require its own template file but can still be invoked just the same as any other presenter.
 
 ```php
 <!-- src/views/layouts/base.php -->
@@ -97,13 +103,13 @@ class Heading extends Composable {
 </html>
 ```
 
-- `render()` extracts variables into the template and returns the output as a string.  
+The `render` method of `Renderable` extracts variables into the template and returns the output as a string.  
 
 ---
 
 ### Pages
 
-Pages are typically **Buildables**, like **Composables** they are self-contained, and do not need separate view templates. They gain the ability to use the `compile` and `build` methods which output html files to the `public` directory:
+Pages are typically **Buildables**, like **Composables** they are self-contained, and do not need separate view templates. They inherit the `compile` and `build` methods which output html files to the build directory (`public` by default):
 
 ```php
 use Taujor\PHPSSG\Contracts\Buildable;
@@ -115,19 +121,17 @@ class Post extends Buildable
     public function __invoke(object $data): string
     {
         return ($this->base)(
-            ($this->title)($data->title) .
-            ($this->body)($data->content)
+            ($this->title)($data->title) . ($this->body)($data->content)
         );
     }
 }
 ```
 
-Pages often combine components and layouts. `$data` is passed to the page during the build process. `$data` is then passed to components via `__invoke()`. Layouts wrap the combined HTML content.  
+Pages often combine components and layouts. The `$data` argument is passed to the page during the build process. `$data` is then passed to components via their respective `__invoke()` methods. Then finally the layout wraps the combined HTML content.
 
 ### Utilities
 
-Utilities are typically helper classes that provide additional functionality to phpssg.
-They will become more useful in the near future once hooks are released.
+Utilities are typically helper classes that provide additional functionality to phpssg. You can use utility classes to implement different renderers, 
 
 ```php
 <?php namespace Taujor\PHPSSG\Utilities;
@@ -145,9 +149,7 @@ class Locate {
 }
 ```
 
-This utility class can be used to locate the root of a composer project, it's currently already in use throughout the project. Soon I plan to create hooks that allow you to easily write and include your own utilities in the build process.
-
-These are my recommendations. However, any **component, page, or presenter** can also extend any of the abstract classes: **Buildable**, **Composable**, **Renderable**. Depending on your specific use case for phpssg or programming style.
+This utility class can be used to locate the root of a composer project, it's currently already in use throughout the project.
 
 ---
 
@@ -251,15 +253,9 @@ Each `{{key}}` is replaced with the corresponding key from the dataset item (arr
 
 ---
 
-### Minimal Required Directories
+### Required Directories
 
-The only **mandatory directories** for a PHPSSG project are:
-
-1. `public/` – the web-facing build directory.  
-2. `src/views/` – root directory for all templates.  
-3. `cache/` – application cache directory that is automatically created as needed.
-
-Everything else (`scripts/`, `presenters/`, `presenters/components/`, `presenters/layouts/`, `presenters/pages/`, `utilities/`, `views/components`, `views/layouts` etc.) is optional, depending on how you structure your project.
+There are no required directories, you can decide how you like to structure your project. I have provided some sane default directories you can see in the next section that will work with zero configuration.
 
 ---
 
@@ -299,7 +295,7 @@ Contributions are welcome! Philosophy:
 ## Planned Features
 - [*] **Packagist Release** - use composer to install phpssg with ease.
 - [*] **Hooks** - add extensibility to the build process.
-- [ ] **Caching** – reduce build times for large projects.  
+- [*] **Caching** – reduce build times for large projects.  
 - [ ] **Documentation** – phpssg.com for guides and community resources.  
 - [ ] **Templates** – premade templates to start projects quickly.  
 - [ ] **Tutorials** – step-by-step guides on using PHPSSG effectively.  
