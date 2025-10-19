@@ -103,7 +103,7 @@ class Locate {
      */
     public static function proxies($override = ""): string {
         if (self::$proxy === null) {
-            self::$proxy = $override !== "" ? self::cache() . $override : self::cache() . "/cache/proxies";
+            self::$proxy = $override !== "" ? self::cache() . $override : self::cache() . "/proxies";
         }
         return self::$proxy;
     }
