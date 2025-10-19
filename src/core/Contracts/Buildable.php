@@ -77,6 +77,7 @@ abstract class Buildable {
 
         $isUnchanged = false;
 
+
         if (is_file($file)) {
             $existing = file_get_contents($file);
             if (is_string($existing) && strlen($existing) === strlen($html)) {

@@ -25,8 +25,11 @@ class Locate {
     /** @var string|null Cached absolute path to the views directory */
     private static ?string $views = null;
 
-    /** @var string|null Cached absolute path to the cache directory */
+    /** @var string|null Cached absolute path to the root cache directory */
     private static ?string $cache = null;
+
+       /** @var string|null Cached absolute path to the hash cache directory */
+    private static ?string $hashes = null;
 
     /** @var string|null Cached absolute path to the proxy cache directory */
     private static ?string $proxy = null;
@@ -66,7 +69,7 @@ class Locate {
     }
 
     /**
-     * Get or set the cache directory.
+     * Get or set the root cache directory.
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the cache directory. Defaults to `/cache`.
@@ -78,15 +81,29 @@ class Locate {
         return self::$cache;
     }
 
+     /**
+     * Get or set the hash cache directory.
+     *
+     * @param string $override Optional path to override the default (applied only on first call).
+     * @return string Absolute path to the hash cache directory. Defaults to `/cache/hashes`.
+     */
+
+     public static function hashes($override = ""): string {
+        if (self::$hashes === null) {
+            self::$hashes = $override !== "" ? self::cache() . $override : self::cache() . "/hashes";
+        }
+        return self::$hashes;
+    }
+
     /**
      * Get or set the proxy cache directory.
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the proxy directory. Defaults to `/cache/proxy`.
      */
-    public static function proxy($override = ""): string {
+    public static function proxies($override = ""): string {
         if (self::$proxy === null) {
-            self::$proxy = $override !== "" ? self::root() . $override : self::root() . "/cache/proxy";
+            self::$proxy = $override !== "" ? self::cache() . $override : self::cache() . "/cache/proxies";
         }
         return self::$proxy;
     }
@@ -131,6 +148,7 @@ class Locate {
         self::$root = null;
         self::$views = null;
         self::$cache = null;
+        self::$hashes = null;
         self::$proxy = null;
         self::$build = null;
         self::$engine = null;

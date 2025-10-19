@@ -30,7 +30,7 @@ class Container {
      */
     public static function create(): \DI\Container {
         $cache = Locate::cache();
-        $proxy = Locate::proxy();
+        $proxy = Locate::proxies();
 
         // Ensure cache and proxy directories exist
         foreach ([$cache, $proxy] as $dir) {
