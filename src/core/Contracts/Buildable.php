@@ -1,5 +1,6 @@
 <?php namespace Taujor\PHPSSG\Contracts;
 
+use Taujor\PHPSSG\Utilities\Cache;
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
 
@@ -77,13 +78,13 @@ abstract class Buildable {
 
         $isUnchanged = false;
 
+        $storedHash = Cache::get($file);
 
-        if (is_file($file)) {
-            $existing = file_get_contents($file);
-            if (is_string($existing) && strlen($existing) === strlen($html)) {
-                $isUnchanged = hash('sha256', $existing) === hash('sha256', $html);
-            }
-        }
+        if(!$storedHash){
+            Cache::set($file, $html);
+        }        
+
+        $isUnchanged = $storedHash === hash('xxh3', $html) ? true : false;
 
         if ($isUnchanged) return 0;
 

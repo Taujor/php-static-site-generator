@@ -4,11 +4,11 @@ use Taujor\PHPSSG\Utilities\Locate;
 
 class Cache {
 
-    public static function get($path): string {
+    public static function get(string $path): string|false {
         $filename = hash("xxh3", $path);
         $hashfile = Locate::hashes() . "/$filename.hash";
 
-        if (!file_exists($hashfile) || !is_file($hashfile)) throw new \RuntimeException("File does not exist or is not a file: '$hashfile' path:'$path' has not been hashed");
+        if (!file_exists($hashfile) || !is_file($hashfile)) return false;
         
         $hash = file_get_contents($hashfile);
 
