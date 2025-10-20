@@ -48,9 +48,9 @@ class Locate {
      *
      * @return string Absolute path to the project root.
      */
-    public static function root(): string {
+    public static function root(string $override = ""): string {
         if (self::$root === null) {
-            self::$root = Phar::running() ? getcwd() : dirname(Factory::getComposerFile());
+            self::$root = Phar::running() ? getcwd() : ($override !== "" ? $override : dirname(Factory::getComposerFile()));
         }
         return self::$root;
     }
@@ -61,7 +61,7 @@ class Locate {
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the views directory. Defaults to `/src/views`.
      */
-    public static function views($override = ""): string {
+    public static function views(string $override = ""): string {
         if (self::$views === null) {
             self::$views = $override !== "" ? self::root() . $override : self::root() . "/src/views";
         }
@@ -74,7 +74,7 @@ class Locate {
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the cache directory. Defaults to `/cache`.
      */
-    public static function cache($override = ""): string {
+    public static function cache(string $override = ""): string {
         if (self::$cache === null) {
             self::$cache = $override !== "" ? self::root() . $override : self::root() . "/cache";
         }
@@ -88,7 +88,7 @@ class Locate {
      * @return string Absolute path to the hash cache directory. Defaults to `/cache/hashes`.
      */
 
-     public static function hashes($override = ""): string {
+     public static function hashes(string $override = ""): string {
         if (self::$hashes === null) {
             self::$hashes = $override !== "" ? self::cache() . $override : self::cache() . "/hashes";
         }
@@ -101,7 +101,7 @@ class Locate {
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the proxy directory. Defaults to `/cache/proxy`.
      */
-    public static function proxies($override = ""): string {
+    public static function proxies(string $override = ""): string {
         if (self::$proxy === null) {
             self::$proxy = $override !== "" ? self::cache() . $override : self::cache() . "/proxies";
         }
@@ -114,7 +114,7 @@ class Locate {
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the build directory. Defaults to `/public`.
      */
-    public static function build($override = ""): string {
+    public static function build(string $override = ""): string {
         if (self::$build === null) {
             self::$build = $override !== "" ? self::root() . $override : self::root() . "/public";
         }
@@ -129,7 +129,7 @@ class Locate {
      * @param string $override Optional override for the file extension (applied only on first call).
      * @return string File extension for the template engine (e.g. `.php`, `.twig`). Defaults to `.php`.
      */
-    public static function engine($override = ""): string {
+    public static function engine(string $override = ""): string {
         if (self::$engine === null) {
             self::$engine = $override !== "" ? $override : ".php";
         }
