@@ -74,6 +74,8 @@ class Base extends Renderable
 }
 ```
 
+---
+
 ### Components
 
 Components are typically **Renderables** (like layouts) or **Composables** :
@@ -132,6 +134,8 @@ class Post extends Buildable
 ```
 
 Pages often combine components and layouts. The `$data` argument is passed to the page during the build process. `$data` is then passed to components via their respective `__invoke()` methods. Then finally the layout wraps the combined HTML content.
+
+---
 
 ### Utilities
 
@@ -243,7 +247,7 @@ There are no mandated directory names or conventions, you can decide how you lik
 
 ### Suggested Structure 
 
-There are some directories PHPSSG needs to have around, those being a views, build, and cache directory (marked as **REQUIRED**). You are free to reconfigure them as needed but if they are missing the project will not work as expected. The cache directory is automatically created during runtime if it doesn't already exist.
+There are some directories PHPSSG needs to have around, those being a views, build, and cache directory (marked as **REQUIRED**). You are free to reconfigure them as needed but if they are missing the project will not work as expected. The cache and it's sub-directories are automatically created during runtime if they don't already exist.
 
 - **`config/`** – bootstrap and environment setup.  
 - **`public/`** – **REQUIRED** build directory, CSS, JS, and other web-facing assets. 
@@ -287,21 +291,21 @@ Post::compile("/posts/post-1.html", (object)[
 ```
 As you can see above the `Locate` utility class provides static methods that can both override and return the configured location. Once an override is set further overrides will be ignored for the duration of the runtime, you can bypass this using `Locate::reset()` which will revert all changes to default. 
 
-`Locate` is used througout PHPSSG to get configuration data, it works lazily, inteligently setting defaults the first time it is called and caching them in memory, subsequent calls always return the cached location rather than whatever is in the `$override` argument or expected by default. Calling `Locate::reset()` clears this cache setting each static variable to null. Then when a method of `Locate` is called again it will either set and return it's defaults or use a supplied override.
+`Locate` is used througout PHPSSG to get configuration data, it works lazily, inteligently setting defaults the first time it is called and caching them in memory, subsequent calls always return the cached location rather than whatever is in the `$override` argument or expected by default. Calling `Locate::reset()` clears this cache, setting each static variable to null. Then when a method of `Locate` is called again it will either cache and return it's defaults or use the supplied override.
 
 Here is a list of `Locate`'s default settings:
 
 ### Default Configuration
 
-| Property | Method | Default Path | Relative To |
-|-----------|---------|---------------|--------------|
-| `$root` | `root()` | *(project root)* | — |
-| `$views` | `views()` | `/src/views` | `root()` |
-| `$cache` | `cache()` | `/cache` | `root()` |
-| `$hashes` | `hashes()` | `/cache/hashes` | `cache()` |
-| `$proxy` | `proxies()` | `/cache/proxies` | `cache()` |
-| `$build` | `build()` | `/public` | `root()` |
-| `$engine` | `engine()` | `.php` | — |
+ Method | Default Path | Relative To |
+---------|---------------|--------------|
+| `root()` | *(project root)* | — |
+| `views()` | `/src/views` | `root()` |
+| `cache()` | `/cache` | `root()` |
+| `hashes()` | `/hashes` | `cache()` |
+| `proxies()` | `/proxies` | `cache()` |
+| `build()` | `/public` | `root()` |
+| `engine()` | `.php` | — |
 
 ---
 
@@ -317,9 +321,9 @@ Contributions are welcome! Philosophy:
 ---
 
 ## Planned Features
-- [*] **Packagist Release** - use composer to install phpssg with ease.
-- [*] **Hooks** - add extensibility to the build process.
-- [*] **Caching** – reduce build times for large projects.  
+- [x] **Packagist Release** - use composer to install phpssg with ease.
+- [x] **Hooks** - add extensibility to the build process.
+- [x] **Caching** – reduce build times for large projects.  
 - [ ] **Documentation Website** – phpssg.com for guides and community resources.  
 - [ ] **Templates** – premade templates to start projects quickly.  
 - [ ] **Tutorials** – step-by-step guides on using PHPSSG effectively.  

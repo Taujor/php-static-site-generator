@@ -45,7 +45,8 @@ class Locate {
      *
      * If running inside a PHAR, this will return the current working directory.
      * Otherwise, it uses Composer’s `Factory::getComposerFile()` to locate the root and go one directory up.
-     *
+     * 
+     * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the project root.
      */
     public static function root(string $override = ""): string {

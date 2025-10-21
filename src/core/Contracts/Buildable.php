@@ -69,12 +69,12 @@ abstract class Buildable {
             );
         }
 
-        static::_beforeRender($data);
+        $buildable->_beforeRender($data);
         $html = $buildable($data);
-        static::_afterRender($html, $data);
+        $buildable->_afterRender($html, $data);
 
         $file = self::resolve(Locate::build() . $pattern, $data, $delimiters);
-        static::_beforeWrite($file);
+        $buildable->_beforeWrite($file);
 
         $dir = dirname($file);
         if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
@@ -95,7 +95,7 @@ abstract class Buildable {
 
         Cache::set($file, $html);
 
-        static::_afterWrite($bytes, $file);
+        $buildable->_afterWrite($bytes, $file);
         return $bytes;
     }
 
@@ -156,8 +156,8 @@ abstract class Buildable {
         }, $pattern);
     }
 
-    protected static function _beforeRender(array|object &$data): void {}
-    protected static function _afterRender(string &$html, array|object &$data): void {}
-    protected static function _beforeWrite(string &$file): void {}
-    protected static function _afterWrite(int|false &$bytes, string &$file): void {}
+    protected function _beforeRender(array|object &$data): void {}
+    protected function _afterRender(string &$html, array|object &$data): void {}
+    protected function _beforeWrite(string &$file): void {}
+    protected function _afterWrite(int|false &$bytes, string &$file): void {}
 }

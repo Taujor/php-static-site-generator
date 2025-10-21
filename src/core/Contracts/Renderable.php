@@ -1,5 +1,6 @@
 <?php namespace Taujor\PHPSSG\Contracts;
 
+use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
 
 /**
@@ -46,9 +47,19 @@ abstract class Renderable {
      * @return string Rendered HTML content.
      */
     protected function render(string $view, array $data = []): string {
+        $path = Locate::views() . "/$view" . Locate::engine();
+        $container = Container::instance();
+        $renderable = $container->get(static::class); 
+        $renderable->_beforeExtract($data, $path);
         extract($data, EXTR_SKIP);
         ob_start();
-        include Locate::views() . "/$view" . Locate::engine();
-        return ob_get_clean();
+        include $path;
+        $html = ob_get_clean();
+        $renderable->_afterRender($data, $html);
+        return $html;
     }
+
+    protected function _beforeExtract(array &$data, string &$path): void {}
+    protected function _afterRender(array &$data, &$html): void {}
+
 }
