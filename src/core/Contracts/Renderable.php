@@ -32,8 +32,6 @@ use Taujor\PHPSSG\Utilities\Locate;
  * @method string render(string $view, array $data = []) Render a plain PHP view template with optional data and return its HTML.
  * 
  * Hooks are available for customization:
- * @method void _beforeExtract(array &$data, string &$path)
- * @method void _afterRender(array &$data, &$html)
  */
 abstract class Renderable {
     /**
@@ -63,7 +61,13 @@ abstract class Renderable {
         return $html;
     }
 
+    /**
+    * @internal Hooks are intended for use in subclasses only.
+    */
     protected function _beforeExtract(array &$data, string &$path): void {}
-    protected function _afterRender(array &$data, &$html): void {}
 
+    /**
+    * @internal Hooks are intended for use in subclasses only.
+    */
+    protected function _afterRender(array &$data, &$html): void {}
 }
