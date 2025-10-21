@@ -30,6 +30,10 @@ use Taujor\PHPSSG\Utilities\Locate;
  * @see \Taujor\PHPSSG\Contracts\Buildable
  *
  * @method string render(string $view, array $data = []) Render a plain PHP view template with optional data and return its HTML.
+ * 
+ * Hooks are available for customization:
+ * @method void _beforeExtract(array &$data, string &$path)
+ * @method void _afterRender(array &$data, &$html)
  */
 abstract class Renderable {
     /**
