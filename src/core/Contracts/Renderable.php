@@ -69,5 +69,5 @@ abstract class Renderable {
     /**
     * @internal Hooks are intended for use in subclasses only.
     */
-    protected function _afterRender(array &$data, &$html): void {}
+    protected function _afterRender(array &$data, string &$html): void {}
 }
