@@ -31,6 +31,9 @@
  * @see \Taujor\PHPSSG\Contracts\Buildable
  */
 abstract class Composable {
+    function __construct(){
+        static::_beforeInvoke();
+    }
     /**
      * Invokes the component and returns its composed HTML output.
      *
@@ -40,4 +43,6 @@ abstract class Composable {
      * @return string The composed HTML for this component.
      */
     abstract public function __invoke(): string;
+
+    function _beforeInvoke() :void {}
 }

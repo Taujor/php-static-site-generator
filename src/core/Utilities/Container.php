@@ -32,7 +32,6 @@ class Container {
         $cache = Locate::cache();
         $proxy = Locate::proxies();
 
-        // Ensure cache and proxy directories exist
         foreach ([$cache, $proxy] as $dir) {
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);

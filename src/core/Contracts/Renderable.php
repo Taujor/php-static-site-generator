@@ -34,6 +34,9 @@ use Taujor\PHPSSG\Utilities\Locate;
  * Hooks are available for customization:
  */
 abstract class Renderable {
+    function __construct(){
+        static::_beforeInvoke();
+    }
     /**
      * Renders a PHP view template with provided data.
      *
@@ -61,6 +64,10 @@ abstract class Renderable {
         return $html;
     }
 
+    /**
+    * @internal Hooks are intended for use in subclasses only.
+    */
+    protected function _beforeInvoke(): void {}
     /**
     * @internal Hooks are intended for use in subclasses only.
     */

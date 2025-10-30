@@ -36,6 +36,10 @@ use Taujor\PHPSSG\Utilities\Locate;
  * @method static int|false build(string $pattern, iterable $dataset) Build multiple files from an iterable dataset.
  */
 abstract class Buildable {
+    function __construct(){
+        static::_beforeInvoke();
+    }
+
     /**
      * Compiles a template pattern with provided data and writes it to a file.
      *
@@ -45,6 +49,7 @@ abstract class Buildable {
      * overwriting unchanged files.
      *
      * Hooks are available for customization:
+     * @method void _beforeInvoke()
      * @method void _beforeRender(array|object &$data)
      * @method void _afterRender(string &$html, array|object &$data)
      * @method void _beforeWrite(string &$file)
@@ -156,6 +161,7 @@ abstract class Buildable {
         }, $pattern);
     }
 
+    protected function _beforeInvoke(): void {}
     protected function _beforeRender(array|object &$data): void {}
     protected function _afterRender(string &$html, array|object &$data): void {}
     protected function _beforeWrite(string &$file): void {}

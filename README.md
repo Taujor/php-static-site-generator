@@ -196,6 +196,33 @@ There are currently four hooks available in the current version of PHPSSG. They 
 - `_beforeWrite`
 - `_afterWrite`
 
+_afterRender Example
+
+```php
+<a class="button" href="<?= $link ?>"><?= $content ?></a>
+```
+
+```php
+class ButtonFat extends Renderable {
+    function _afterRender(array &$data, string &$html): void {
+        $dom = new \DOMDocument();
+        @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $elements = $dom->getElementsByTagName("a");
+        $a = $elements->item(0);
+        $className = $a->getAttribute("class");
+        $a->setAttribute("class", "$className button--fat");
+        $html = $dom->saveHTML();
+    }
+
+    function __invoke($link, $content){
+        return $this->render("components/button", [
+            "link" => $link,
+            "content" => $content
+        ]);
+    }
+}
+```
+
 ---
 
 ### Build scripts
@@ -324,6 +351,6 @@ Contributions are welcome! Philosophy:
 - [x] **Packagist Release** - use composer to install phpssg with ease.
 - [x] **Hooks** - add extensibility to the build process.
 - [x] **Caching** – reduce build times for large projects.  
-- [ ] **Documentation Website** – phpssg.com for guides and community resources.  
 - [ ] **Templates** – premade templates to start projects quickly.  
+- [ ] **Documentation Website** – phpssg.com for guides and community resources.  
 - [ ] **Tutorials** – step-by-step guides on using PHPSSG effectively.  
