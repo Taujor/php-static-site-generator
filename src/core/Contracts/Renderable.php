@@ -1,5 +1,4 @@
 <?php namespace Taujor\PHPSSG\Contracts;
-
 use Taujor\PHPSSG\Utilities\Container;
 use Taujor\PHPSSG\Utilities\Locate;
 
@@ -30,8 +29,11 @@ use Taujor\PHPSSG\Utilities\Locate;
  * @see \Taujor\PHPSSG\Contracts\Buildable
  *
  * @method string render(string $view, array $data = []) Render a plain PHP view template with optional data and return its HTML.
- * 
+ *
  * Hooks are available for customization:
+ * @method void _beforeInvoke() Called before the component is invoked, useful for initialization.
+ * @method void _beforeExtract(array &$data, string &$path) Called before extracting data into the template, useful for modifying data or path.
+ * @method void _afterRender(array &$data, string &$html) Called after rendering the template, useful for modifying the HTML output.
  */
 abstract class Renderable {
     function __construct(){
@@ -44,8 +46,8 @@ abstract class Renderable {
      * can access, captures the output buffer, and returns the rendered HTML
      * as a string with a trailing newline.
      *
-     * The `$view` path is relative to `src/views/` and should not include the
-     * `.php` extension. Example: `'components/title'` or `'layouts/base'`.
+     * The `$view` path is relative to your `views` directory (`src/views/` by default) and should not include the
+     * `.php` extension which is handled by `Locate::engine()` instead. @see \Taujor\PHPSSG\Utilities\Locate for more details on configuration. Example: `'components/title'` or `'layouts/base'`.
      *
      * @param string $view Relative path to the PHP view template (without .php).
      * @param array $data Optional associative array of variables for the template.
@@ -54,7 +56,7 @@ abstract class Renderable {
     protected function render(string $view, array $data = []): string {
         $path = Locate::views() . "/$view" . Locate::engine();
         $container = Container::instance();
-        $renderable = $container->get(static::class); 
+        $renderable = $container->get(static::class);
         $renderable->_beforeExtract($data, $path);
         extract($data, EXTR_SKIP);
         ob_start();
@@ -63,18 +65,36 @@ abstract class Renderable {
         $renderable->_afterRender($data, $html);
         return $html;
     }
-
     /**
-    * @internal Hooks are intended for use in subclasses only.
-    */
+     * Hook called before the component is invoked.
+     *
+     * Use this hook to initialize any resources or configurations required
+     * before rendering begins. This hook is called once when the component is instantiated.
+     *
+     * @internal Hooks are intended for use in subclasses only.
+     */
     protected function _beforeInvoke(): void {}
     /**
-    * @internal Hooks are intended for use in subclasses only.
-    */
+     * Hook called before extracting data into the template.
+     *
+     * Use this hook to modify the data or template path before the template is rendered.
+     * This is useful for preprocessing data or dynamically changing the template path.
+     *
+     * @param array $data Associative array of variables to be extracted into the template.
+     * @param string $path The resolved path to the template file.
+     * @internal Hooks are intended for use in subclasses only.
+     */
     protected function _beforeExtract(array &$data, string &$path): void {}
-
     /**
-    * @internal Hooks are intended for use in subclasses only.
-    */
+     * Hook called after rendering the template.
+     *
+     * Use this hook to modify the rendered HTML before it is returned. This is useful
+     * for post-processing the HTML, such as DOM manipulation, minifying the output,
+     * or injecting metadata, etc.
+     *
+     * @param array $data Associative array of variables used in the template.
+     * @param string $html The rendered HTML content.
+     * @internal Hooks are intended for use in subclasses only.
+     */
     protected function _afterRender(array &$data, string &$html): void {}
 }
