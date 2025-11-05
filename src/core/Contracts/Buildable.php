@@ -111,7 +111,7 @@ abstract class Buildable {
             throw new \RuntimeException("Failed to write file: $file");
         }
         Cache::set($file, $html);
-        $buildable->_afterWrite($bytes, $file);
+        $buildable->_afterWrite($file, $bytes);
         return $bytes;
     }
 
