@@ -13,7 +13,7 @@ PHPSSG uses **invokable component classes**, **output buffering**, and **plain P
 - **Plain PHP templates** – no special syntax to learn.  
 - **Invokable components** – use components like `$header()`.
 - **Component based routing** – `Buildable` components get methods able to write the html they generate to a file.
-- **Hooks** – Hooks are available in the build process to easily inject your own custom code to manipulate content before or just after it is generated.  
+- **Hooks** – Hooks are available to easily inject your own custom code to manipulate content during the component lifecycle.  
 - **Centralized render helper** – avoids repeated `ob_start()` / `ob_get_clean()`.  
 - **Nesting & composition** – layouts can include multiple components.  
 - **PHAR Support** – easily ran as a phar if desired.
@@ -35,6 +35,16 @@ PHPSSG uses **invokable component classes**, **output buffering**, and **plain P
 - PHP 8.1+ (xxh3 hashing)  
 - Composer (autoloading)
 - PHP-DI (dependency injection)
+
+---
+
+## Quick start
+
+Clone the skeleton template repo or visit the repo and click "Use this template"
+
+```bash
+git clone https://github.com/Taujor/php-static-site-generator-skeleton
+```
 
 ---
 
@@ -160,11 +170,8 @@ class Locate {
 
 This utility class can be used to locate the root of a composer project, this example is derrived from the `Locate` utility class used throughout this project, see the "build scripts" section for details on how `Locate` is used for configuration.
 
-You can even extend an abstract class such as `Renderable` to support entirely different templating systems such as twig or markdown and using your extended class in your components instead of the defaults. In a future release there will be separate offically maintained integrations you can install via composer that will extend PHPSSG's core features this way. Don't let that stop you from creating your own that are specfic to your individual project. 
+You can even extend an abstract class such as `Renderable` to support entirely different templating systems such as twig or markdown and using your extended class in your components instead of the defaults. In a future release there will be separate offically maintained integrations you can install via composer that will extend PHPSSG's core features this way, but don't let that stop you from creating your own that are specfic to your individual project. 
 
-```php
-// EXAMPLE GOES HERE
-```
 ---
 
 ### Views
@@ -190,42 +197,102 @@ src/
 
 ### Hooks
 
-There are currently four hooks available in the current version of PHPSSG. They include:
-- `_beforeRender`
-- `_afterRender`
-- `_beforeWrite`
-- `_afterWrite`
+Hooks provide lifecycle entry points for customizing the behavior of your components.  
+They are defined in the base `Composable`, `Renderable`, and `Buildable` contracts, and are automatically called at key points in the rendering or build process.
 
-_afterRender Example
+Hooks are **optional** — override only those you need.  
+They are always **protected** and are intended for **internal subclass use only**.
 
+---
+
+#### Composable Hooks
+
+`Composable` components are pure PHP objects that produce HTML by combining other components.
+
+| Hook | Signature | Called When | Common Use Cases |
+|------|------------|--------------|------------------|
+| `_beforeInvoke()` | `void` | When the component is instantiated | Set up shared state, inject defaults, or run dependency checks before the component is first used. |
+
+**Example:**
 ```php
-<a class="button" href="<?= $link ?>"><?= $content ?></a>
-```
-
-```php
-class ButtonFat extends Renderable {
-    function _afterRender(array &$data, string &$html): void {
-        $dom = new \DOMDocument();
-        @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $elements = $dom->getElementsByTagName("a");
-        $a = $elements->item(0);
-        $className = $a->getAttribute("class");
-        $a->setAttribute("class", "$className button--fat");
-        $html = $dom->saveHTML();
+class Hero extends Composable {
+    protected function _beforeInvoke(): void {
+        $this->timestamp = time();
     }
 
-    function __invoke($link, $content){
-        return $this->render("components/button", [
-            "link" => $link,
-            "content" => $content
-        ]);
+    public function __invoke(): string {
+        return "<p>Generated at {$this->timestamp}</p>";
     }
 }
 ```
 
 ---
 
-### Build scripts
+#### Renderable Hooks
+
+`Renderable` components generate HTML from PHP view templates.
+
+| Hook | Signature | Called When | Common Use Cases |
+|------|------------|--------------|------------------|
+| `_beforeInvoke()` | `void` | On component instantiation | Initialize configurations, register filters, or set default view variables. |
+| `_beforeExtract()` | `(array &$data, string &$path)` | Before variables are extracted into the template | Sanitize or transform `$data`, or modify `$path` to dynamically choose a template. |
+| `_afterRender()` | `(array &$data, string &$html)` | After the template has been rendered | Perform post-processing (minification, analytics injection, DOM mutation, etc.). |
+
+**Example:**
+```php
+class Title extends Renderable {
+    protected function _beforeExtract(array &$data, string &$path): void {
+        $data['text'] = htmlspecialchars($data['text']);
+    }
+
+    protected function _afterRender(array &$data, string &$html): void {
+        $html = trim($html) . "\n";
+    }
+
+    public function __invoke(string $text): string {
+        return $this->render('components/title', ['text' => $text]);
+    }
+}
+```
+
+---
+
+#### Buildable Hooks
+
+`Buildable` components handle static file generation and support a full pre/post lifecycle around rendering and writing output.
+
+| Hook | Signature | Called When | Common Use Cases |
+|------|------------|--------------|------------------|
+| `_beforeInvoke()` | `void` | When the component is instantiated | Initialize caches or configuration before any builds begin. |
+| `_beforeRender()` | `(array|object &$data)` | Before rendering HTML | Transform or validate dataset items before they’re rendered. |
+| `_afterRender()` | `(array|object &$data, string &$html)` | After HTML is generated | Post-process or filter HTML (minify, inject scripts, add metadata). |
+| `_beforeWrite()` | `(array|object &$data, string &$file)` | Before writing to disk | Adjust output path or organize files dynamically based on data. |
+| `_afterWrite()` | `(string &$file, int|false &$bytes)` | After the file has been written | Log results, update caches, or trigger notifications. |
+
+**Example:**
+```php
+class Post extends Buildable {
+    protected function _beforeRender(array|object &$data): void {
+        $data->slug = strtolower(str_replace(' ', '-', $data->title));
+    }
+
+    protected function _afterRender(array|object &$data, string &$html): void {
+        $html .= "\n<!-- Built on " . date('c') . " -->";
+    }
+
+    protected function _afterWrite(string &$file, int|false &$bytes): void {
+        echo "✅ Wrote {$bytes} bytes to $file\n";
+    }
+
+    public function __invoke(array|object $data): string {
+        return "<h1>{$data->title}</h1><p>{$data->content}</p>";
+    }
+}
+```
+
+---
+
+#### Build scripts
 
 This is the entry point of the application often placed in the `scripts` directory at the root of your project. They call on **Buildable** presenters to generate html using the `compile` or `build` static methods. The `compile` method takes a target path relative to your build directory, the generated html will be sent to this path. The second parameter supports either an `array` or `object` containing data you would like to `__invoke` the `Buildable` with. The `build` method simply iterates over your dataset and runs `compile` on each item. You can also use **placeholder** syntax to use any top level value in your dataset to generate unique filenames. For example:
 
@@ -351,6 +418,6 @@ Contributions are welcome! Philosophy:
 - [x] **Packagist Release** - use composer to install phpssg with ease.
 - [x] **Hooks** - add extensibility to the build process.
 - [x] **Caching** – reduce build times for large projects.  
-- [ ] **Templates** – premade templates to start projects quickly.  
+- [x] **Templates** – premade templates to start projects quickly.  
 - [ ] **Documentation Website** – phpssg.com for guides and community resources.  
 - [ ] **Tutorials** – step-by-step guides on using PHPSSG effectively.  
