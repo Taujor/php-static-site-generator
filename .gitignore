@@ -2,3 +2,4 @@ vendor
 tmp
 cache
 composer.lock
+todo.txt
