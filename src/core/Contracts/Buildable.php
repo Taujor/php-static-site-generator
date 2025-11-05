@@ -48,12 +48,6 @@ abstract class Buildable {
      * under the build directory. Uses SHA256 hash comparison to avoid 
      * overwriting unchanged files.
      *
-     * Hooks are available for customization:
-     * @method void _beforeInvoke()
-     * @method void _beforeRender(array|object &$data)
-     * @method void _afterRender(string &$html, array|object &$data)
-     * @method void _beforeWrite(string &$file)
-     * @method void _afterWrite(int|false &$bytes, string &$file)
      *
      * @param string $pattern Placeholder pattern containing placeholders like `{{slug}}` or just plain text either resolves to a path relative to the build directory.
      * @param array|object $data Data to inject into the template.
@@ -76,10 +70,10 @@ abstract class Buildable {
 
         $buildable->_beforeRender($data);
         $html = $buildable($data);
-        $buildable->_afterRender($html, $data);
+        $buildable->_afterRender($data, $html);
 
         $file = self::resolve(Locate::build() . $pattern, $data, $delimiters);
-        $buildable->_beforeWrite($file);
+        $buildable->_beforeWrite($data, $file);
 
         $dir = dirname($file);
         if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
@@ -163,7 +157,7 @@ abstract class Buildable {
 
     protected function _beforeInvoke(): void {}
     protected function _beforeRender(array|object &$data): void {}
-    protected function _afterRender(string &$html, array|object &$data): void {}
-    protected function _beforeWrite(string &$file): void {}
-    protected function _afterWrite(int|false &$bytes, string &$file): void {}
+    protected function _afterRender(array|object &$data, string &$html): void {}
+    protected function _beforeWrite(array|object &$data, string &$file): void {}
+    protected function _afterWrite(string &$file, int|false &$bytes, ): void {}
 }

@@ -70,7 +70,7 @@ class Locate {
     }
 
     /**
-     * Get or set the root cache directory.
+     * Get or set the cache directory.
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the cache directory. Defaults to `/cache`.
