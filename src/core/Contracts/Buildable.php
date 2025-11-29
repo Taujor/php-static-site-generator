@@ -34,15 +34,15 @@ use Taujor\PHPSSG\Utilities\Locate;
  * @see \Taujor\PHPSSG\Utilities\Container For dependency injection.
  * @see \Taujor\PHPSSG\Utilities\Locate For file and directory location utilities.
  *
- * @method string|false __invoke(array|object $data = []) Render the buildable component with provided data and return HTML.
- * @method static int|false compile(string $pattern, array|object $data = []) Compile a single placeholder pattern with data and write to file.
+ * @method string|false __invoke(mixed $data) Render the buildable component with provided data and return HTML.
+ * @method static int|false compile(string $pattern, mixed $data) Compile a single placeholder pattern with data and write to file.
  * @method static int|false build(string $pattern, iterable $dataset) Build multiple files from an iterable dataset.
  *
  * Available hooks for customization:
  * @method void _beforeInvoke() Called before the component is invoked, useful for initialization.
- * @method void _beforeRender(array|object &$data) Called before data is rendered, useful for data preprocessing.
- * @method void _afterRender(array|object &$data, string &$html) Called after HTML is rendered, useful for HTML postprocessing.
- * @method void _beforeWrite(array|object &$data, string &$file) Called before writing to file, useful for file path adjustments.
+ * @method void _beforeRender(mixed &$data) Called before data is rendered, useful for data preprocessing.
+ * @method void _afterRender(mixed &$data, string &$html) Called after HTML is rendered, useful for HTML postprocessing.
+ * @method void _beforeWrite(mixed &$data, string &$file) Called before writing to file, useful for file path adjustments.
  * @method void _afterWrite(string &$file, int|false &$bytes) Called after writing to file, useful for logging or notifications.
  */
 abstract class Buildable {
@@ -78,13 +78,13 @@ abstract class Buildable {
      * 12. Call _afterWrite hook for completion actions
      *
      * @param string $pattern Placeholder pattern containing placeholders like `{{slug}}` or just plain text either resolves to a path relative to the build directory.
-     * @param array|object $data Data to inject into the template.
+     * @param mixed $data Data to inject into the template.
      * @param string $delimiters Placeholder delimiters separated by whitespace (default: '{{ }}').
      * @return int|false Number of bytes written, 0 if unchanged, or false on failure.
      * @throws \InvalidArgumentException If the class is not callable or does not extend Buildable.
      * @throws \RuntimeException If the output directory cannot be created or file cannot be written.
      */
-    public static function compile(string $pattern, array|object $data = [], string $delimiters = "{{ }}") : int|false {
+    public static function compile(string $pattern, mixed $data, string $delimiters = "{{ }}") : int|false {
         $container = Container::instance();
         $buildable = $container->get(static::class);
         if (!($buildable instanceof Buildable) || !is_callable($buildable)) {
@@ -158,7 +158,7 @@ abstract class Buildable {
      * @param string $delimiters Placeholder delimiters separated by whitespace (default: '{{ }}').
      * @return string Pattern with placeholders replaced by actual data, if the data key did not exist an empty string will be returned.
      */
-    protected static function resolve(string $pattern, array|object|null $data, string $delimiters = "{{ }}") : string {
+    protected static function resolve(string $pattern, mixed $data, string $delimiters = "{{ }}") : string {
         $delimiters = preg_split("/\s+/", trim($delimiters));
         $delimiters = count($delimiters) < 2 ? ["{{", "}}"] : $delimiters;
         $open = preg_quote($delimiters[0], '/');
@@ -194,7 +194,7 @@ abstract class Buildable {
      * @param array|object $data The data that will be used for rendering.
      * @internal Hooks are intended for use in subclasses only.
      */
-    protected function _beforeRender(array|object &$data) : void {}
+    protected function _beforeRender(mixed &$data) : void {}
 
     /**
      * Hook called after HTML is rendered.
@@ -203,11 +203,11 @@ abstract class Buildable {
      * This is useful for post-processing the HTML, such as adding global scripts,
      * minifying the output, or injecting metadata.
      *
-     * @param array|object $data The data that was used for rendering.
+     * @param mixed $data The data that was used for rendering.
      * @param string $html The rendered HTML content.
      * @internal Hooks are intended for use in subclasses only.
      */
-    protected function _afterRender(array|object &$data, string &$html) : void {}
+    protected function _afterRender(mixed &$data, string &$html) : void {}
 
     /**
      * Hook called before writing to file.
@@ -220,7 +220,7 @@ abstract class Buildable {
      * @param string $file The resolved file path where the content will be written.
      * @internal Hooks are intended for use in subclasses only.
      */
-    protected function _beforeWrite(array|object &$data, string &$file) : void {}
+    protected function _beforeWrite(mixed &$data, string &$file) : void {}
 
     /**
      * Hook called after writing to file.
