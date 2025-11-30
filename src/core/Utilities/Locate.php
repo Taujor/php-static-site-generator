@@ -28,7 +28,7 @@ class Locate {
     /** @var string|null Cached absolute path to the root cache directory */
     private static ?string $cache = null;
 
-       /** @var string|null Cached absolute path to the hash cache directory */
+    /** @var string|null Cached absolute path to the hash cache directory */
     private static ?string $hashes = null;
 
     /** @var string|null Cached absolute path to the proxy cache directory */
@@ -41,17 +41,33 @@ class Locate {
     private static ?string $engine = null;
 
     /**
+     * Validate that an override path doesn't contain the base path.
+     *
+     * @param string $path The override path to validate.
+     * @param string $base The base path to check against.
+     * @throws \InvalidArgumentException If the override contains the base path.
+     */
+    private static function validate(string $path, string $base): void {
+        if (strpos($path, $base) !== false) {
+            throw new \InvalidArgumentException(
+                "Override path must not contain the base path '$base'. " .
+                "Provide a path relative to '$base' instead."
+            );
+        }
+    }
+
+    /**
      * Resolve and return the project root directory.
      *
      * If running inside a PHAR, this will return the current working directory.
-     * Otherwise, it uses Composer’s `Factory::getComposerFile()` to locate the root and go one directory up.
+     * Otherwise, it uses Composer's `Factory::getComposerFile()` to locate the root and go one directory up.
      * 
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the project root.
      */
     public static function root(string $override = ""): string {
         if (self::$root === null) {
-            self::$root = Phar::running() ? getcwd() : ($override !== "" ? $override : dirname(Factory::getComposerFile()));
+            self::$root = Phar::running() ? (realpath(getcwd()) ?: getcwd()) : ($override !== "" ? $override : realpath(dirname(Factory::getComposerFile())));
         }
         return self::$root;
     }
@@ -61,10 +77,16 @@ class Locate {
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the views directory. Defaults to `/src/views`.
+     * @throws \InvalidArgumentException If override contains the root path.
      */
     public static function views(string $override = ""): string {
         if (self::$views === null) {
-            self::$views = $override !== "" ? self::root() . $override : self::root() . "/src/views";
+            if ($override !== "") {
+                self::validate($override, self::root());
+                self::$views = self::root() . $override;
+            } else {
+                self::$views = self::root() . "/src/views";
+            }
         }
         return self::$views;
     }
@@ -74,24 +96,35 @@ class Locate {
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the cache directory. Defaults to `/cache`.
+     * @throws \InvalidArgumentException If override contains the root path.
      */
     public static function cache(string $override = ""): string {
         if (self::$cache === null) {
-            self::$cache = $override !== "" ? self::root() . $override : self::root() . "/cache";
+            if ($override !== "") {
+                self::validate($override, self::root());
+                self::$cache = self::root() . $override;
+            } else {
+                self::$cache = self::root() . "/cache";
+            }
         }
         return self::$cache;
     }
 
-     /**
+    /**
      * Get or set the hash cache directory.
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the hash cache directory. Defaults to `/cache/hashes`.
+     * @throws \InvalidArgumentException If override contains the cache path.
      */
-
-     public static function hashes(string $override = ""): string {
+    public static function hashes(string $override = ""): string {
         if (self::$hashes === null) {
-            self::$hashes = $override !== "" ? self::cache() . $override : self::cache() . "/hashes";
+            if ($override !== "") {
+                self::validate($override, self::cache());
+                self::$hashes = self::cache() . $override;
+            } else {
+                self::$hashes = self::cache() . "/hashes";
+            }
         }
         return self::$hashes;
     }
@@ -100,11 +133,17 @@ class Locate {
      * Get or set the proxy cache directory.
      *
      * @param string $override Optional path to override the default (applied only on first call).
-     * @return string Absolute path to the proxy directory. Defaults to `/cache/proxy`.
+     * @return string Absolute path to the proxy directory. Defaults to `/cache/proxies`.
+     * @throws \InvalidArgumentException If override contains the cache path.
      */
     public static function proxies(string $override = ""): string {
         if (self::$proxy === null) {
-            self::$proxy = $override !== "" ? self::cache() . $override : self::cache() . "/proxies";
+            if ($override !== "") {
+                self::validate($override, self::cache());
+                self::$proxy = self::cache() . $override;
+            } else {
+                self::$proxy = self::cache() . "/proxies";
+            }
         }
         return self::$proxy;
     }
@@ -114,10 +153,16 @@ class Locate {
      *
      * @param string $override Optional path to override the default (applied only on first call).
      * @return string Absolute path to the build directory. Defaults to `/public`.
+     * @throws \InvalidArgumentException If override contains the root path.
      */
     public static function build(string $override = ""): string {
         if (self::$build === null) {
-            self::$build = $override !== "" ? self::root() . $override : self::root() . "/public";
+            if ($override !== "") {
+                self::validate($override, self::root());
+                self::$build = self::root() . $override;
+            } else {
+                self::$build = self::root() . "/public";
+            }
         }
         return self::$build;
     }
